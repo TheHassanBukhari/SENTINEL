@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTINEL — Study Notes</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 860px; margin: 0 auto; padding: 40px 24px; background: #fafaf8; color: #1a1a18; line-height: 1.8; }
+  h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 4px; }
+  .acronym { font-size: 0.95rem; color: #5F5E5A; margin-bottom: 6px; }
+  .meta { color: #888780; font-size: 0.88rem; margin-bottom: 40px; }
+  .intro { font-size: 1rem; margin-bottom: 40px; max-width: 640px; }
+  hr { border: none; border-top: 1px solid #D3D1C7; margin: 36px 0; }
+  .parts-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; color: #888780; text-transform: uppercase; margin-bottom: 20px; }
+  .part-card { display: flex; gap: 20px; align-items: flex-start; padding: 20px 0; border-bottom: 1px solid #F1EFE8; text-decoration: none; color: inherit; transition: background 0.15s; border-radius: 8px; padding-left: 12px; padding-right: 12px; }
+  .part-card:hover { background: #F1EFE8; }
+  .part-card:last-child { border-bottom: none; }
+  .part-number { background: #534AB7; color: #fff; border-radius: 8px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+  .part-number.n2 { background: #1D9E75; }
+  .part-number.n3 { background: #BA7517; }
+  .part-number.n4 { background: #A32D2D; }
+  .part-number.n5 { background: #0F6E56; }
+  .part-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 3px; }
+  .part-desc { font-size: 0.92rem; color: #5F5E5A; margin: 0; }
+  .part-topics { font-size: 0.82rem; color: #888780; margin-top: 5px; }
+  .footer { margin-top: 48px; font-size: 0.85rem; color: #888780; }
+  .badge { display: inline-block; background: #EEEDFE; color: #534AB7; border-radius: 20px; padding: 3px 12px; font-size: 0.78rem; font-weight: 700; margin-right: 6px; }
+  .badge.green { background: #EAF3DE; color: #3B6D11; }
+  .badge.amber { background: #FAEEDA; color: #854F0B; }
+</style>
+</head>
+<body>
+
+<div style="margin-bottom:8px;">
+  <span class="badge">DSA Project</span>
+  <span class="badge green">3rd Semester</span>
+  <span class="badge amber">COMSATS Islamabad</span>
+</div>
+
+<h1>SENTINEL</h1>
+<p class="acronym">Spread and Exposure Network for Tracking, Isolation and Neutralizing Epidemic Linked Nodes</p>
+<p class="meta">BS Computer Science &nbsp;|&nbsp; Data Structures and Algorithms &nbsp;|&nbsp; Spring 2025</p>
+
+<p class="intro">
+  These notes cover everything behind SENTINEL, a console based epidemic contact tracing system built in C++. Starting from how memory works, through every data structure and algorithm, to the full project walkthrough. Written to understand the system from the ground up, not just use it.
+</p>
+
+<hr>
+
+<div class="parts-label">Study Notes</div>
+
+<a class="part-card" href="part1_foundations.html">
+  <div class="part-number">1</div>
+  <div>
+    <div class="part-title">Foundations: Memory, Nodes, and Linked Lists</div>
+    <p class="part-desc">Everything starts here. How RAM works, what a pointer is, what a node is, and how linked lists chain them together.</p>
+    <div class="part-topics">Memory addresses &nbsp;·&nbsp; Pointers &nbsp;·&nbsp; Nodes &nbsp;·&nbsp; Linked list operations</div>
+  </div>
+</a>
+
+<a class="part-card" href="part2_data_structures.html">
+  <div class="part-number n2">2</div>
+  <div>
+    <div class="part-title">Data Structures: Stack, Queue, Heap, AVL Tree, HashMap</div>
+    <p class="part-desc">Each of the five core structures explained from scratch. Pure concept, no project context yet.</p>
+    <div class="part-topics">Stack &nbsp;·&nbsp; Queue &nbsp;·&nbsp; Heap &nbsp;·&nbsp; AVL Tree &nbsp;·&nbsp; HashMap</div>
+  </div>
+</a>
+
+<a class="part-card" href="part3_graphs_algorithms.html">
+  <div class="part-number n3">3</div>
+  <div>
+    <div class="part-title">Graphs, BFS, Dijkstra, and Prim's Algorithm</div>
+    <p class="part-desc">The three most powerful tools in SENTINEL. Graphs explained first, then all three algorithms from scratch with step by step examples.</p>
+    <div class="part-topics">Graph theory &nbsp;·&nbsp; BFS wave traversal &nbsp;·&nbsp; Dijkstra shortest path &nbsp;·&nbsp; Prim's MST</div>
+  </div>
+</a>
+
+<a class="part-card" href="part4_sentinel_context.html">
+  <div class="part-number n4">4</div>
+  <div>
+    <div class="part-title">SENTINEL: Every Structure in Context</div>
+    <p class="part-desc">Every data structure and algorithm mapped directly onto the epidemic system. Why each one exists and exactly what job it does.</p>
+    <div class="part-topics">Risk scoring &nbsp;·&nbsp; Contact network &nbsp;·&nbsp; Transmission tracing &nbsp;·&nbsp; Containment strategy</div>
+  </div>
+</a>
+
+<a class="part-card" href="part5_project_structure.html">
+  <div class="part-number n5">5</div>
+  <div>
+    <div class="part-title">Project Structure and Full Code Walkthrough</div>
+    <p class="part-desc">How the files are organized, how they connect, how data flows from CSV into every structure, and viva preparation questions.</p>
+    <div class="part-topics">File dependencies &nbsp;·&nbsp; Data flow &nbsp;·&nbsp; Menu system &nbsp;·&nbsp; Viva Q&A</div>
+  </div>
+</a>
+
+<hr>
+
+<div class="footer">
+  Built with C++ &nbsp;·&nbsp; All data structures implemented from scratch using linked lists &nbsp;·&nbsp; No STL containers
+</div>
+
+</body>
+</html>
