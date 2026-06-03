@@ -53,6 +53,12 @@ SENTINEL/
 ├── data/
 │   ├── patients.csv
 │   └── contacts.csv
+├── docs/
+│   ├── part1_foundations.html
+│   ├── part2_data_structures.html
+│   ├── part3_graphs_algorithms.html
+│   ├── part4_sentinel_context.html
+│   └── part5_project_structure.html
 ├── main.cpp
 ├── Stack.h
 ├── Case.h
@@ -63,7 +69,8 @@ SENTINEL/
 ├── Graph.h
 ├── Dijkstra.h
 ├── Prims.h
-└── DataLoader.h
+├── DataLoader.h
+└── README.md
 ```
 
 ---
