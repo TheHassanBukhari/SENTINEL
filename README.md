@@ -54,6 +54,7 @@ SENTINEL/
 │   ├── patients.csv
 │   └── contacts.csv
 ├── docs/
+│   ├── index.html
 │   ├── part1_foundations.html
 │   ├── part2_data_structures.html
 │   ├── part3_graphs_algorithms.html
