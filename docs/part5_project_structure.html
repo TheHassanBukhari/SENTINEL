@@ -428,7 +428,7 @@
 
 <h2>7. Compiling and Running</h2>
 
-<p>On Zorin OS open a terminal, navigate to the project folder, and run:</p>
+<p>On your OS open a terminal, navigate to the project folder, and run:</p>
 
 <pre>cd project
 g++ main.cpp -o sentinel
@@ -442,29 +442,35 @@ g++ main.cpp -o sentinel
 
 <hr>
 
-<h2>8. Viva Preparation: Questions You Will Likely Be Asked</h2>
+<h2>8. Design Decisions</h2>
+<p>Common questions about why the system is built the way it is. Each answer explains the reasoning behind a specific choice.</p>
 
 <table>
-  <tr><th>Question</th><th>Answer to give</th></tr>
-  <tr><td>Why did you use a linked list instead of arrays?</td><td>Dynamic size. We do not know how many patients will be recorded. Linked lists grow without limits and without wasted reserved space.</td></tr>
-  <tr><td>What is the difference between your Stack and Queue?</td><td>Stack is LIFO, per patient, for investigation history. Queue is FIFO, global, for case processing order. Opposite access patterns for different purposes.</td></tr>
-  <tr><td>Why does each patient have their own stack?</td><td>Because each case has its own timeline of events. A global stack would mix events from all patients. This way the case file is self contained.</td></tr>
-  <tr><td>How does Dijkstra work in your system?</td><td>We invert edge weights so high risk contacts become short distances. Dijkstra finds the shortest distance path which in our case is the highest probability transmission chain.</td></tr>
-  <tr><td>What is the difference between Dijkstra and Prim's?</td><td>Dijkstra finds the best path between two specific patients. Prim's finds the minimum set of edges connecting all patients in a cluster. Different goals entirely.</td></tr>
-  <tr><td>Why AVL Tree and not just HashMap for patient lookup?</td><td>HashMap gives instant lookup by ID but cannot do range queries or maintain sorted order. AVL Tree gives us range search by day and chronological display. They solve different problems.</td></tr>
-  <tr><td>Why two hashmaps?</td><td>One maps patient ID to their profile for fast individual lookup. One maps area code to list of patients for fast geographic analysis. Different keys, different purposes.</td></tr>
-  <tr><td>What does BFS do in SENTINEL?</td><td>Simulates the outbreak spreading wave by wave from a starting patient. Shows who gets exposed in day 1, day 2, day 3 of the spread from that source.</td></tr>
-  <tr><td>What is the risk score based on?</td><td>Seven binary factors: fever, cough, breathing difficulty, large gathering attendance, high contact job, known contact with confirmed case, age above 60 or comorbidity. Maximum 130 points.</td></tr>
-  <tr><td>How does your system save data?</td><td>Currently the system loads from CSV at startup and operates in memory. Data is not persisted back to CSV after changes. This is a known limitation.</td></tr>
+  <tr><th>Question</th><th>Answer</th></tr>
+  <tr><td>Why linked lists instead of arrays?</td><td>The number of patients in an outbreak is unpredictable. Linked lists allocate memory only for what exists, growing naturally as new cases are recorded without any predefined size limit.</td></tr>
+  <tr><td>What is the difference between the Stack and the Queue in this system?</td><td>Stack is LIFO, per patient, for investigation history. Queue is FIFO, global, for case processing order. Opposite access patterns for different purposes.</td></tr>
+  <tr><td>Why does each patient have their own stack instead of one global stack?</td><td>Each patient has a unique sequence of medical and investigative events. Embedding a stack inside each case keeps that history self contained and tied directly to the patient it belongs to.</td></tr>
+  <tr><td>How does Dijkstra find the transmission path?</td><td>We invert edge weights so high risk contacts become short distances. Dijkstra finds the shortest distance path which in our case is the highest probability transmission chain.</td></tr>
+  <tr><td>What is the difference between Dijkstra and Prim's here?</td><td>They answer fundamentally different questions. Dijkstra traces the path between two specific patients. Prim's finds the minimum set of connections holding an entire cluster together.</td></tr>
+  <tr><td>Why use an AVL Tree when there is already a HashMap?</td><td>HashMap gives instant lookup by ID but cannot do range queries or maintain sorted order. AVL Tree gives us range search by day and chronological display. They solve different problems.</td></tr>
+  <tr><td>Why two hashmaps instead of one?</td><td>One maps patient ID to their profile for fast individual lookup. One maps area code to list of patients for fast geographic analysis. Different keys, different purposes.</td></tr>
+  <tr><td>What does the BFS simulation actually show?</td><td>Simulates the outbreak spreading wave by wave from a starting patient. Shows who gets exposed in day 1, day 2, day 3 of the spread from that source.</td></tr>
+  <tr><td>How is the risk score calculated?</td><td>Seven binary factors: fever, cough, breathing difficulty, large gathering attendance, high contact job, known contact with confirmed case, age above 60 or comorbidity. Maximum 130 points.</td></tr>
+  <tr><td>Does the system persist data after changes?</td><td>Currently the system loads from CSV at startup and operates in memory. Data is not persisted back to CSV after changes. This is a known limitation.</td></tr>
 </table>
 
 <hr>
 
 <div class="callout teal">
-  <strong>Final note:</strong> You built a system that models a real epidemic. Every structure has a reason. Every algorithm solves a problem that would be unsolvable without it. When your examiner asks why you chose something, the answer is never because we needed to use it. The answer is always because the problem required it.
+  Every structure in SENTINEL exists because the problem required it. The epidemic domain maps naturally onto graphs, priority queues, and search trees. The system is not a showcase of data structures. The data structures are a consequence of modeling the problem honestly.
 </div>
 
 <p style="color:#5F5E5A; font-size:0.9rem; text-align:center; margin-top:40px;">All five parts complete. SENTINEL documentation finished.</p>
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-top:48px; padding-top:24px; border-top:1px solid #D3D1C7;">
+  <a href="part4_sentinel_context.html" style="font-family:Georgia,serif; font-size:0.9rem; color:#534AB7; text-decoration:none;">← Part 4: SENTINEL Context</a>
+  <a href="index.html" style="font-family:Georgia,serif; font-size:0.9rem; color:#534AB7; text-decoration:none;">← Back to Index</a>
+</div>
 
 </body>
 </html>
