@@ -21,35 +21,37 @@ Prims prims;
 
 void printHeader() {
     cout << "\n";
-    cout << "   ============================================\n";
-    cout << "       SENTINEL - Epidemic Tracking System    \n";
-    cout << "      Spread and Exposure Network for         \n";
-    cout << "   Tracking, Isolation & Neutralizing         \n";
-    cout << "             Epidemic Linked Nodes            \n";
-    cout << "   ============================================\n";
+    cout << "  SENTINEL\n";
+    cout << "  Spread and Exposure Network for Tracking,\n";
+    cout << "  Isolation and Neutralizing Epidemic Linked Nodes\n";
+    cout << "  Version 1.0 | COMSATS Islamabad\n\n";
 }
 
 void printMenu() {
-    cout << "\n   ============ MAIN MENU ============\n";
-    cout << "   1.  View All Patients\n";
-    cout << "   2.  Search Patient by ID\n";
-    cout << "   3.  Add New Patient\n";
-    cout << "   4.  Update Patient Status\n";
-    cout << "   5.  View Case Investigation Log\n";
-    cout << "   6.  Add Investigation Event to Case\n";
-    cout << "   7.  View Patients by Day\n";
-    cout << "   8.  View Patients by Area\n";
-    cout << "   9.  View Patients in Day Range (AVL Tree)\n";
-    cout << "   10. View High Risk Patients (Heap)\n";
-    cout << "   11. View Area Case Distribution (HashMap)\n";
-    cout << "   12. View Contact Network (Graph)\n";
-    cout << "   13. Simulate Outbreak Spread (BFS Queue)\n";
-    cout << "   14. Trace Transmission Path (Dijkstra)\n";
-    cout << "   15. Find Minimum Containment Network (Prim's)\n";
-    cout << "   16. View Sorted Timeline (AVL Tree)\n";
-    cout << "   0.  Exit\n";
-    cout << "   ===================================\n";
-    cout << "   Choice: ";
+    cout << "\n  [ MAIN MENU ]\n\n";
+    cout << "  Patient Management\n";
+    cout << "    1.  View all patients\n";
+    cout << "    2.  Search patient by ID\n";
+    cout << "    3.  Add new patient\n";
+    cout << "    4.  Update patient status\n\n";
+    cout << "  Case Investigation\n";
+    cout << "    5.  View case investigation log\n";
+    cout << "    6.  Add investigation event\n\n";
+    cout << "  Search and Filter\n";
+    cout << "    7.  View patients by day\n";
+    cout << "    8.  View patients by area\n";
+    cout << "    9.  View patients in day range\n\n";
+    cout << "  Analysis\n";
+    cout << "    10. High risk patients\n";
+    cout << "    11. Area case distribution\n";
+    cout << "    12. View contact network\n\n";
+    cout << "  Epidemic Algorithms\n";
+    cout << "    13. Simulate outbreak spread\n";
+    cout << "    14. Trace transmission path\n";
+    cout << "    15. Find minimum containment network\n";
+    cout << "    16. View sorted patient timeline\n\n";
+    cout << "    0.  Exit\n\n";
+    cout << "  Choice: ";
 }
 
 string getCurrentTime() {
@@ -75,7 +77,7 @@ void addNewPatient() {
     string id, name, area, status;
     int age, day;
 
-    cout << "\n   === ADD NEW PATIENT ===\n";
+    cout << "\n  Add New Patient\n\n";
     cout << "   Patient ID  : "; cin >> id;
 
     if (patientMap.getPerson(id)) {
@@ -182,7 +184,7 @@ int main() {
 
         switch (choice) {
             case 1:
-                cout << "\n   === ALL PATIENTS ===\n";
+                cout << "\n  All Patients\n\n";
                 caseQueue.displayAll();
                 break;
 
@@ -234,17 +236,17 @@ int main() {
             }
 
             case 10:
-                cout << "\n   === HIGH RISK PATIENTS ===\n";
+                cout << "\n  High Risk Patients\n\n";
                 riskHeap.display();
                 break;
 
             case 11:
-                cout << "\n   === AREA DISTRIBUTION ===\n";
+                cout << "\n  Area Distribution\n\n";
                 patientMap.displayAllLocations();
                 break;
 
             case 12:
-                cout << "\n   === CONTACT NETWORK ===\n";
+                cout << "\n  Contact Network\n\n";
                 contactGraph.displayGraph();
                 break;
 
@@ -264,7 +266,7 @@ int main() {
                 break;
 
             case 16:
-                cout << "\n   === PATIENT TIMELINE ===\n";
+                cout << "\n  Patient Timeline\n\n";
                 patientTree.displayAll();
                 break;
 
