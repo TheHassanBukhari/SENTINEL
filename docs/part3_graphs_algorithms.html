@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTINEL Notes - Part 3: Graphs and Algorithms</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 860px; margin: 0 auto; padding: 40px 24px; background: #fafaf8; color: #1a1a18; line-height: 1.8; }
+  h1 { font-size: 2rem; font-weight: 700; border-bottom: 3px solid #2c2c2a; padding-bottom: 12px; margin-bottom: 8px; }
+  h2 { font-size: 1.4rem; font-weight: 700; margin-top: 48px; color: #1a1a18; border-left: 4px solid #534AB7; padding-left: 12px; }
+  h3 { font-size: 1.1rem; font-weight: 700; margin-top: 28px; color: #3C3489; }
+  p { margin: 14px 0; font-size: 1rem; }
+  .subtitle { color: #5F5E5A; font-size: 1rem; margin-top: 4px; margin-bottom: 32px; }
+  .box { background: #fff; border: 1px solid #D3D1C7; border-radius: 10px; padding: 20px 24px; margin: 24px 0; }
+  .callout { background: #EEEDFE; border-left: 4px solid #534AB7; border-radius: 0 8px 8px 0; padding: 14px 20px; margin: 20px 0; font-size: 0.97rem; }
+  .callout.green { background: #EAF3DE; border-left-color: #3B6D11; }
+  .callout.amber { background: #FAEEDA; border-left-color: #854F0B; }
+  .callout.red { background: #FCEBEB; border-left-color: #A32D2D; }
+  code { background: #F1EFE8; border-radius: 4px; padding: 2px 7px; font-family: 'Courier New', monospace; font-size: 0.93rem; color: #3C3489; }
+  svg { display: block; margin: 24px auto; }
+  .diagram-caption { text-align: center; color: #5F5E5A; font-size: 0.88rem; margin-top: -12px; margin-bottom: 24px; font-style: italic; }
+  hr { border: none; border-top: 1px solid #D3D1C7; margin: 40px 0; }
+  .part-label { display: inline-block; background: #534AB7; color: #fff; border-radius: 20px; padding: 4px 16px; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 12px; }
+  .structure-label { display: inline-block; background: #F1EFE8; border: 1px solid #B4B2A9; border-radius: 6px; padding: 2px 10px; font-size: 0.82rem; font-weight: 700; color: #444441; margin-bottom: 6px; letter-spacing: 0.04em; }
+  .step-box { background: #fff; border: 1px solid #D3D1C7; border-radius: 8px; padding: 14px 20px; margin: 12px 0; display: flex; gap: 16px; align-items: flex-start; }
+  .step-number { background: #534AB7; color: #fff; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; flex-shrink: 0; margin-top: 2px; }
+  ul li { margin: 6px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.93rem; }
+  th { background: #EEEDFE; color: #26215C; padding: 10px 14px; text-align: left; font-weight: 700; }
+  td { padding: 10px 14px; border-bottom: 1px solid #F1EFE8; }
+  tr:last-child td { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<div class="part-label">PART 3 OF 5</div>
+<h1>Graphs, BFS, Dijkstra, and Prim's Algorithm</h1>
+<p class="subtitle">The three most powerful tools in SENTINEL. All three operate on graphs. Understanding the graph first makes everything else click.</p>
+
+<hr>
+
+<h2>1. What Is a Graph</h2>
+<div class="structure-label">Nodes connected by edges</div>
+
+<p>A graph is the most general way to represent relationships between things. It has two components:</p>
+<ul>
+  <li><strong>Nodes</strong> (also called vertices): the things. A person, a city, a router, a webpage.</li>
+  <li><strong>Edges</strong>: the connections between things. A friendship, a road, a cable, a hyperlink.</li>
+</ul>
+
+<p>That is all a graph is. Dots and lines between them. But this simple idea can model almost any real world system.</p>
+
+<svg width="100%" viewBox="0 0 680 260" role="img">
+  <title>Basic graph with five nodes and weighted edges</title>
+  <desc>Five circular nodes connected by lines with weight numbers on each connection</desc>
+  <defs><marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+  <line x1="200" y1="80" x2="340" y2="60" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="200" y1="80" x2="160" y2="200" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="340" y1="60" x2="500" y2="100" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="340" y1="60" x2="360" y2="200" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="500" y1="100" x2="360" y2="200" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="160" y1="200" x2="360" y2="200" stroke="#B4B2A9" stroke-width="1.5"/>
+
+  <text x="272" y="55" text-anchor="middle" font-family="Georgia" font-size="12" fill="#534AB7" font-weight="700">5</text>
+  <text x="165" y="148" text-anchor="middle" font-family="Georgia" font-size="12" fill="#534AB7" font-weight="700">3</text>
+  <text x="432" y="68" text-anchor="middle" font-family="Georgia" font-size="12" fill="#534AB7" font-weight="700">7</text>
+  <text x="358" y="128" text-anchor="middle" font-family="Georgia" font-size="12" fill="#534AB7" font-weight="700">4</text>
+  <text x="448" y="165" text-anchor="middle" font-family="Georgia" font-size="12" fill="#534AB7" font-weight="700">6</text>
+  <text x="262" y="215" text-anchor="middle" font-family="Georgia" font-size="12" fill="#534AB7" font-weight="700">8</text>
+
+  <circle cx="200" cy="80" r="30" fill="#534AB7" stroke="#3C3489" stroke-width="1"/>
+  <text x="200" y="85" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">A</text>
+
+  <circle cx="340" cy="60" r="30" fill="#534AB7" stroke="#3C3489" stroke-width="1"/>
+  <text x="340" y="65" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">B</text>
+
+  <circle cx="500" cy="100" r="30" fill="#534AB7" stroke="#3C3489" stroke-width="1"/>
+  <text x="500" y="105" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">C</text>
+
+  <circle cx="360" cy="200" r="30" fill="#534AB7" stroke="#3C3489" stroke-width="1"/>
+  <text x="360" y="205" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">D</text>
+
+  <circle cx="160" cy="200" r="30" fill="#534AB7" stroke="#3C3489" stroke-width="1"/>
+  <text x="160" y="205" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">E</text>
+
+  <text x="580" y="100" text-anchor="start" font-family="Georgia" font-size="12" fill="#5F5E5A">numbers on</text>
+  <text x="580" y="118" text-anchor="start" font-family="Georgia" font-size="12" fill="#5F5E5A">edges are</text>
+  <text x="580" y="136" text-anchor="start" font-family="Georgia" font-size="12" fill="#534AB7" font-weight="700">weights</text>
+</svg>
+<p class="diagram-caption">A weighted graph. Five nodes, six edges, each edge has a weight representing cost, distance, or risk.</p>
+
+<h3>Weighted vs unweighted</h3>
+<p>An unweighted graph just says whether two nodes are connected or not. A weighted graph assigns a number to each edge. That number can mean distance, cost, time, risk, or anything meaningful to the problem.</p>
+
+<h3>Directed vs undirected</h3>
+<p>An undirected graph means the connection goes both ways. If A is connected to B then B is connected to A. A directed graph means connections have a direction. A can point to B without B pointing back to A. Like a one way street.</p>
+
+<h3>How a graph is stored in code</h3>
+<p>Each node is an object. Each node has a linked list of its neighbors called an adjacency list. Each item in that list contains the neighbor's ID and the edge weight between them. The whole graph is a collection of these node objects.</p>
+
+<div class="callout">
+  Everything in the real world that involves relationships can be modeled as a graph. Social networks, road maps, the internet, disease spread, power grids. The three algorithms below are how you extract meaning from a graph.
+</div>
+
+<hr>
+
+<h2>2. BFS: Breadth First Search</h2>
+<div class="structure-label">Explores level by level outward from a starting node</div>
+
+<p>BFS answers the question: starting from one node, in what order do you reach all other nodes if you always explore the closest ones first?</p>
+
+<p>Imagine dropping a stone in still water. Ripples spread outward in rings. The first ring is closest to the stone. The second ring is one step further. The third ring is two steps out. BFS explores a graph exactly like this, ring by ring, level by level.</p>
+
+<h3>How BFS works step by step</h3>
+
+<div class="step-box">
+  <div class="step-number">1</div>
+  <div>Start at the source node. Mark it as visited. Add it to the queue.</div>
+</div>
+<div class="step-box">
+  <div class="step-number">2</div>
+  <div>Dequeue the front node. Look at all its unvisited neighbors. Mark each as visited and add each to the back of the queue.</div>
+</div>
+<div class="step-box">
+  <div class="step-number">3</div>
+  <div>Repeat. Dequeue the next node. Visit its unvisited neighbors. Add them to the queue.</div>
+</div>
+<div class="step-box">
+  <div class="step-number">4</div>
+  <div>Continue until the queue is empty. Every node reachable from the source has been visited.</div>
+</div>
+
+<svg width="100%" viewBox="0 0 680 340" role="img">
+  <title>BFS wave exploration diagram</title>
+  <desc>A graph showing BFS waves expanding outward from node A, with wave 0 at center, wave 1 around it, wave 2 further out</desc>
+
+  <circle cx="340" cy="50" r="100" fill="none" stroke="#EEEDFE" stroke-width="40" opacity="0.6"/>
+  <circle cx="340" cy="50" r="180" fill="none" stroke="#E1F5EE" stroke-width="35" opacity="0.5"/>
+
+  <line x1="340" y1="50" x2="220" y2="140" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="340" y1="50" x2="460" y2="140" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="220" y1="140" x2="140" y2="250" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="220" y1="140" x2="300" y2="250" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="460" y1="140" x2="380" y2="250" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="460" y1="140" x2="560" y2="250" stroke="#B4B2A9" stroke-width="1.5"/>
+
+  <circle cx="340" cy="50" r="32" fill="#534AB7" stroke="#3C3489" stroke-width="1.5"/>
+  <text x="340" y="44" text-anchor="middle" font-family="Georgia" font-size="11" fill="#CECBF6">wave 0</text>
+  <text x="340" y="60" text-anchor="middle" font-family="Georgia" font-size="14" fill="#fff" font-weight="700">A</text>
+
+  <circle cx="220" cy="140" r="28" fill="#7F77DD" stroke="#534AB7" stroke-width="1"/>
+  <text x="220" y="134" text-anchor="middle" font-family="Georgia" font-size="10" fill="#EEEDFE">wave 1</text>
+  <text x="220" y="148" text-anchor="middle" font-family="Georgia" font-size="14" fill="#fff" font-weight="700">B</text>
+
+  <circle cx="460" cy="140" r="28" fill="#7F77DD" stroke="#534AB7" stroke-width="1"/>
+  <text x="460" y="134" text-anchor="middle" font-family="Georgia" font-size="10" fill="#EEEDFE">wave 1</text>
+  <text x="460" y="148" text-anchor="middle" font-family="Georgia" font-size="14" fill="#fff" font-weight="700">C</text>
+
+  <circle cx="140" cy="250" r="26" fill="#1D9E75" stroke="#0F6E56" stroke-width="1"/>
+  <text x="140" y="244" text-anchor="middle" font-family="Georgia" font-size="10" fill="#E1F5EE">wave 2</text>
+  <text x="140" y="258" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">D</text>
+
+  <circle cx="300" cy="250" r="26" fill="#1D9E75" stroke="#0F6E56" stroke-width="1"/>
+  <text x="300" y="244" text-anchor="middle" font-family="Georgia" font-size="10" fill="#E1F5EE">wave 2</text>
+  <text x="300" y="258" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">E</text>
+
+  <circle cx="380" cy="250" r="26" fill="#1D9E75" stroke="#0F6E56" stroke-width="1"/>
+  <text x="380" y="244" text-anchor="middle" font-family="Georgia" font-size="10" fill="#E1F5EE">wave 2</text>
+  <text x="380" y="258" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">F</text>
+
+  <circle cx="560" cy="250" r="26" fill="#1D9E75" stroke="#0F6E56" stroke-width="1"/>
+  <text x="560" y="244" text-anchor="middle" font-family="Georgia" font-size="10" fill="#E1F5EE">wave 2</text>
+  <text x="560" y="258" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">G</text>
+
+  <text x="340" y="318" text-anchor="middle" font-family="Georgia" font-size="12" fill="#5F5E5A">purple = wave 0, dark purple = wave 1, green = wave 2</text>
+</svg>
+<p class="diagram-caption">BFS from node A. First it visits A. Then B and C (one step away). Then D, E, F, G (two steps away). It always finishes one full wave before starting the next.</p>
+
+<h3>Why BFS needs a Queue</h3>
+<p>The Queue is what enforces the wave by wave order. When you discover neighbors of A you add them to the back of the queue. B and C are now in the queue. When you process B you add its neighbors D and E to the back. But C is still at the front ahead of D and E so C gets processed before them. This naturally produces the wave order.</p>
+
+<div class="callout green">
+  Without a queue, BFS does not work. The FIFO property of the queue is precisely what keeps exploration in rings rather than diving deep into one branch.
+</div>
+
+<hr>
+
+<h2>3. Dijkstra's Algorithm</h2>
+<div class="structure-label">Finds the shortest weighted path between two nodes</div>
+
+<p>BFS finds the path with the fewest hops. But what if edges have weights and you want the path with the lowest total weight, not the fewest edges?</p>
+
+<p>Think of a road map. You want to drive from city A to city D. There might be a route with only two roads but one of them is 800 km long. There might be another route with four roads that totals only 320 km. BFS would pick the two road route. Dijkstra picks the 320 km route because it finds the minimum total cost.</p>
+
+<h3>The core idea</h3>
+<p>Assign every node a distance value. The source node gets distance zero. Every other node gets infinity meaning unknown so far. Then repeatedly do this: pick the unvisited node with the smallest current distance, visit it, and update all its neighbors. If going through the current node gives a neighbor a shorter total distance than what it had before, update the neighbor's distance. Keep going until you reach the destination.</p>
+
+<h3>Step by step with an example</h3>
+
+<svg width="100%" viewBox="0 0 680 220" role="img">
+  <title>Dijkstra example graph</title>
+  <desc>Four nodes A B C D with weighted edges showing the graph Dijkstra will solve</desc>
+
+  <line x1="120" y1="110" x2="280" y2="60" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="120" y1="110" x2="280" y2="160" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="280" y1="60" x2="460" y2="110" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="280" y1="160" x2="460" y2="110" stroke="#B4B2A9" stroke-width="1.5"/>
+  <line x1="120" y1="110" x2="460" y2="110" stroke="#B4B2A9" stroke-width="1" stroke-dasharray="5 3"/>
+
+  <text x="192" y="72" text-anchor="middle" font-family="Georgia" font-size="13" fill="#534AB7" font-weight="700">4</text>
+  <text x="192" y="152" text-anchor="middle" font-family="Georgia" font-size="13" fill="#534AB7" font-weight="700">2</text>
+  <text x="378" y="72" text-anchor="middle" font-family="Georgia" font-size="13" fill="#534AB7" font-weight="700">5</text>
+  <text x="378" y="152" text-anchor="middle" font-family="Georgia" font-size="13" fill="#534AB7" font-weight="700">3</text>
+  <text x="290" y="125" text-anchor="middle" font-family="Georgia" font-size="12" fill="#B4B2A9">9 (direct)</text>
+
+  <circle cx="120" cy="110" r="32" fill="#534AB7" stroke="#3C3489" stroke-width="1.5"/>
+  <text x="120" y="104" text-anchor="middle" font-family="Georgia" font-size="11" fill="#CECBF6">dist: 0</text>
+  <text x="120" y="120" text-anchor="middle" font-family="Georgia" font-size="15" fill="#fff" font-weight="700">A</text>
+
+  <circle cx="280" cy="60" r="28" fill="#7F77DD" stroke="#534AB7" stroke-width="1"/>
+  <text x="280" y="54" text-anchor="middle" font-family="Georgia" font-size="10" fill="#EEEDFE">dist: 4</text>
+  <text x="280" y="68" text-anchor="middle" font-family="Georgia" font-size="14" fill="#fff" font-weight="700">B</text>
+
+  <circle cx="280" cy="160" r="28" fill="#7F77DD" stroke="#534AB7" stroke-width="1"/>
+  <text x="280" y="154" text-anchor="middle" font-family="Georgia" font-size="10" fill="#EEEDFE">dist: 2</text>
+  <text x="280" y="168" text-anchor="middle" font-family="Georgia" font-size="14" fill="#fff" font-weight="700">C</text>
+
+  <circle cx="460" cy="110" r="28" fill="#1D9E75" stroke="#0F6E56" stroke-width="1.5"/>
+  <text x="460" y="104" text-anchor="middle" font-family="Georgia" font-size="10" fill="#E1F5EE">dist: 5</text>
+  <text x="460" y="118" text-anchor="middle" font-family="Georgia" font-size="14" fill="#fff" font-weight="700">D</text>
+
+  <text x="580" y="95" text-anchor="start" font-family="Georgia" font-size="12" fill="#3B6D11" font-weight="700">winner path:</text>
+  <text x="580" y="113" text-anchor="start" font-family="Georgia" font-size="12" fill="#3B6D11">A → C → D</text>
+  <text x="580" y="131" text-anchor="start" font-family="Georgia" font-size="12" fill="#3B6D11">cost: 2 + 3 = 5</text>
+  <text x="580" y="155" text-anchor="start" font-family="Georgia" font-size="11" fill="#5F5E5A">not A → B → D</text>
+  <text x="580" y="171" text-anchor="start" font-family="Georgia" font-size="11" fill="#5F5E5A">cost: 4 + 5 = 9</text>
+</svg>
+<p class="diagram-caption">Dijkstra finds A to D costs 5 via C, not 9 via B, and not 9 via the direct route. It always finds the true minimum.</p>
+
+<table>
+  <tr><th>Step</th><th>Current node</th><th>Action</th><th>Distances updated</th></tr>
+  <tr><td>Start</td><td>A</td><td>Set A=0, all others=∞</td><td>A=0, B=∞, C=∞, D=∞</td></tr>
+  <tr><td>1</td><td>A</td><td>Visit A, check neighbors B and C</td><td>B=4, C=2</td></tr>
+  <tr><td>2</td><td>C</td><td>C is smallest unvisited (2). Visit C, check D via C: 2+3=5</td><td>D=5</td></tr>
+  <tr><td>3</td><td>B</td><td>Visit B, check D via B: 4+5=9. 9 is worse than 5 so no update</td><td>D stays 5</td></tr>
+  <tr><td>4</td><td>D</td><td>Destination reached. Shortest path is 5.</td><td>Done</td></tr>
+</table>
+
+<div class="callout amber">
+  <strong>The guarantee:</strong> Dijkstra never updates a distance to something worse. It only improves distances. This means when a node is marked visited, its distance is final and correct. It will never be found to be wrong later.
+</div>
+
+<hr>
+
+<h2>4. Prim's Algorithm</h2>
+<div class="structure-label">Builds the minimum spanning tree of a graph</div>
+
+<p>Dijkstra answers: what is the cheapest path from A to B? Prim's answers a different question entirely: what is the minimum set of edges that keeps every node in the graph connected to every other node?</p>
+
+<p>This result is called a Minimum Spanning Tree, or MST. A spanning tree connects all nodes with no cycles, using the minimum total edge weight.</p>
+
+<h3>The analogy</h3>
+<p>Imagine you have 8 villages and you need to lay electrical cable so every village has power. You do not need every village directly connected to every other village. You just need every village reachable through some path. And you want to use the least total cable length.</p>
+
+<p>Prim's finds exactly which connections to make.</p>
+
+<h3>How Prim's works</h3>
+
+<div class="step-box">
+  <div class="step-number">1</div>
+  <div>Start at any node. Add it to the MST set.</div>
+</div>
+<div class="step-box">
+  <div class="step-number">2</div>
+  <div>Look at all edges that connect a node inside the MST set to a node outside it. Pick the one with the lowest weight.</div>
+</div>
+<div class="step-box">
+  <div class="step-number">3</div>
+  <div>Add that edge and its new node to the MST set.</div>
+</div>
+<div class="step-box">
+  <div class="step-number">4</div>
+  <div>Repeat steps 2 and 3 until all nodes are in the MST set.</div>
+</div>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+  <title>Prim's algorithm building a minimum spanning tree</title>
+  <desc>Left shows full graph with all edges, right shows only the MST edges selected by Prim's algorithm</desc>
+  <defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+  <text x="145" y="24" text-anchor="middle" font-family="Georgia" font-size="12" fill="#5F5E5A" font-weight="700">full graph</text>
+
+  <line x1="80" y1="80" x2="200" y2="80" stroke="#D3D1C7" stroke-width="1"/>
+  <line x1="80" y1="80" x2="80" y2="200" stroke="#D3D1C7" stroke-width="1"/>
+  <line x1="200" y1="80" x2="200" y2="200" stroke="#D3D1C7" stroke-width="1"/>
+  <line x1="80" y1="200" x2="200" y2="200" stroke="#D3D1C7" stroke-width="1"/>
+  <line x1="80" y1="80" x2="200" y2="200" stroke="#D3D1C7" stroke-width="1"/>
+  <line x1="200" y1="80" x2="80" y2="200" stroke="#D3D1C7" stroke-width="1"/>
+
+  <text x="140" y="72" text-anchor="middle" font-family="Georgia" font-size="11" fill="#888780">3</text>
+  <text x="68" y="145" text-anchor="middle" font-family="Georgia" font-size="11" fill="#888780">6</text>
+  <text x="212" y="145" text-anchor="middle" font-family="Georgia" font-size="11" fill="#888780">5</text>
+  <text x="140" y="215" text-anchor="middle" font-family="Georgia" font-size="11" fill="#888780">4</text>
+  <text x="108" y="125" text-anchor="middle" font-family="Georgia" font-size="11" fill="#888780">8</text>
+  <text x="172" y="125" text-anchor="middle" font-family="Georgia" font-size="11" fill="#888780">7</text>
+
+  <circle cx="80" cy="80" r="22" fill="#534AB7" stroke="#3C3489" stroke-width="1"/>
+  <text x="80" y="85" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">A</text>
+  <circle cx="200" cy="80" r="22" fill="#534AB7" stroke="#3C3489" stroke-width="1"/>
+  <text x="200" y="85" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">B</text>
+  <circle cx="80" cy="200" r="22" fill="#534AB7" stroke="#3C3489" stroke-width="1"/>
+  <text x="80" y="205" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">C</text>
+  <circle cx="200" cy="200" r="22" fill="#534AB7" stroke="#3C3489" stroke-width="1"/>
+  <text x="200" y="205" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">D</text>
+
+  <text x="310" y="145" text-anchor="middle" font-family="Georgia" font-size="22" fill="#534AB7">→</text>
+
+  <text x="500" y="24" text-anchor="middle" font-family="Georgia" font-size="12" fill="#3B6D11" font-weight="700">minimum spanning tree</text>
+
+  <line x1="420" y1="80" x2="540" y2="80" stroke="#1D9E75" stroke-width="2.5"/>
+  <line x1="540" y1="80" x2="540" y2="200" stroke="#1D9E75" stroke-width="2.5"/>
+  <line x1="420" y1="200" x2="540" y2="200" stroke="#1D9E75" stroke-width="2.5"/>
+
+  <text x="480" y="68" text-anchor="middle" font-family="Georgia" font-size="12" fill="#3B6D11" font-weight="700">3</text>
+  <text x="553" y="145" text-anchor="middle" font-family="Georgia" font-size="12" fill="#3B6D11" font-weight="700">5</text>
+  <text x="480" y="218" text-anchor="middle" font-family="Georgia" font-size="12" fill="#3B6D11" font-weight="700">4</text>
+
+  <circle cx="420" cy="80" r="22" fill="#1D9E75" stroke="#0F6E56" stroke-width="1"/>
+  <text x="420" y="85" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">A</text>
+  <circle cx="540" cy="80" r="22" fill="#1D9E75" stroke="#0F6E56" stroke-width="1"/>
+  <text x="540" y="85" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">B</text>
+  <circle cx="420" cy="200" r="22" fill="#1D9E75" stroke="#0F6E56" stroke-width="1"/>
+  <text x="420" y="205" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">C</text>
+  <circle cx="540" cy="200" r="22" fill="#1D9E75" stroke="#0F6E56" stroke-width="1"/>
+  <text x="540" y="205" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">D</text>
+
+  <text x="480" y="265" text-anchor="middle" font-family="Georgia" font-size="12" fill="#3B6D11">total cost: 3 + 5 + 4 = 12</text>
+  <text x="480" y="283" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">skipped edges 6, 7, 8 as unnecessary</text>
+</svg>
+<p class="diagram-caption">Prim's selects only 3 edges from the 6 available. All 4 nodes are still connected. Total cost is 12, the minimum possible.</p>
+
+<h3>Key difference from Dijkstra</h3>
+
+<table>
+  <tr><th></th><th>Dijkstra</th><th>Prim's</th></tr>
+  <tr><td><strong>Question answered</strong></td><td>Shortest path from A to B</td><td>Minimum edges to connect all nodes</td></tr>
+  <tr><td><strong>Output</strong></td><td>A single path</td><td>A tree connecting everything</td></tr>
+  <tr><td><strong>Use case</strong></td><td>Navigation, routing</td><td>Network design, infrastructure</td></tr>
+  <tr><td><strong>Cares about</strong></td><td>Two specific nodes</td><td>The entire graph</td></tr>
+</table>
+
+<div class="callout red">
+  <strong>Common confusion:</strong> Both algorithms look similar in code. Both pick the minimum weight at each step. The difference is what they are minimizing. Dijkstra minimizes the distance from the source to each node. Prim's minimizes the weight of the edge being added to the growing tree. Different goals, different outputs.
+</div>
+
+<hr>
+
+<p style="color:#5F5E5A; font-size:0.9rem; text-align:center; margin-top:40px;">Part 3 of 5 complete. Next: SENTINEL context: every structure and algorithm mapped to the epidemic system specifically.</p>
+
+</body>
+</html>

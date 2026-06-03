@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SENTINEL Notes - Part 4: Everything in Context</title>
+<style>
+  body { font-family: Georgia, serif; max-width: 860px; margin: 0 auto; padding: 40px 24px; background: #fafaf8; color: #1a1a18; line-height: 1.8; }
+  h1 { font-size: 2rem; font-weight: 700; border-bottom: 3px solid #2c2c2a; padding-bottom: 12px; margin-bottom: 8px; }
+  h2 { font-size: 1.4rem; font-weight: 700; margin-top: 48px; color: #1a1a18; border-left: 4px solid #534AB7; padding-left: 12px; }
+  h3 { font-size: 1.1rem; font-weight: 700; margin-top: 28px; color: #3C3489; }
+  p { margin: 14px 0; font-size: 1rem; }
+  .subtitle { color: #5F5E5A; font-size: 1rem; margin-top: 4px; margin-bottom: 32px; }
+  .callout { background: #EEEDFE; border-left: 4px solid #534AB7; border-radius: 0 8px 8px 0; padding: 14px 20px; margin: 20px 0; font-size: 0.97rem; }
+  .callout.green { background: #EAF3DE; border-left-color: #3B6D11; }
+  .callout.amber { background: #FAEEDA; border-left-color: #854F0B; }
+  .callout.teal { background: #E1F5EE; border-left-color: #0F6E56; }
+  code { background: #F1EFE8; border-radius: 4px; padding: 2px 7px; font-family: 'Courier New', monospace; font-size: 0.93rem; color: #3C3489; }
+  svg { display: block; margin: 24px auto; }
+  .diagram-caption { text-align: center; color: #5F5E5A; font-size: 0.88rem; margin-top: -12px; margin-bottom: 24px; font-style: italic; }
+  hr { border: none; border-top: 1px solid #D3D1C7; margin: 40px 0; }
+  .part-label { display: inline-block; background: #534AB7; color: #fff; border-radius: 20px; padding: 4px 16px; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 12px; }
+  .structure-tag { display: inline-block; background: #534AB7; color: #fff; border-radius: 6px; padding: 2px 10px; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 8px; }
+  .structure-tag.green { background: #1D9E75; }
+  .structure-tag.amber { background: #BA7517; }
+  .structure-tag.teal { background: #0F6E56; }
+  .structure-tag.red { background: #A32D2D; }
+  .structure-tag.gray { background: #5F5E5A; }
+  .map-row { display: flex; gap: 16px; margin: 16px 0; align-items: stretch; }
+  .map-left { background: #EEEDFE; border-radius: 8px; padding: 14px 18px; flex: 1; }
+  .map-right { background: #E1F5EE; border-radius: 8px; padding: 14px 18px; flex: 1; }
+  .map-label { font-size: 0.8rem; font-weight: 700; color: #888780; letter-spacing: 0.05em; margin-bottom: 4px; }
+  ul li { margin: 6px 0; }
+  .score-row { display: flex; align-items: center; gap: 12px; margin: 8px 0; }
+  .score-bar-wrap { flex: 1; background: #F1EFE8; border-radius: 4px; height: 12px; }
+  .score-bar { height: 12px; border-radius: 4px; }
+  .score-label { font-size: 0.88rem; min-width: 200px; }
+  .score-pts { font-size: 0.85rem; color: #534AB7; font-weight: 700; min-width: 36px; text-align: right; }
+</style>
+</head>
+<body>
+
+<div class="part-label">PART 4 OF 5</div>
+<h1>SENTINEL: Every Structure in Context</h1>
+<p class="subtitle">Now we map everything learned in Parts 1 to 3 directly onto the epidemic tracking system. This is where abstract concepts become real decisions.</p>
+
+<hr>
+
+<h2>The Big Picture First</h2>
+
+<p>SENTINEL stands for Spread and Exposure Network for Tracking, Isolation, and Neutralizing Epidemic Linked Nodes.</p>
+
+<p>The system models a disease outbreak. Real people are being infected. Real contacts are being recorded. Real decisions about who to quarantine and where the virus is heading need to be made fast. Every data structure in the system has one specific job that no other structure can do.</p>
+
+<svg width="100%" viewBox="0 0 680 300" role="img">
+  <title>SENTINEL system overview showing all seven structures and their roles</title>
+  <desc>A diagram showing how the seven data structures connect and feed into each other within SENTINEL</desc>
+  <defs><marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+
+  <rect x="270" y="20" width="140" height="44" rx="8" fill="#534AB7" stroke="#3C3489" stroke-width="1"/>
+  <text x="340" y="47" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">CSV Data</text>
+
+  <line x1="340" y1="64" x2="340" y2="94" stroke="#534AB7" stroke-width="1.5" marker-end="url(#a1)"/>
+
+  <rect x="255" y="96" width="170" height="44" rx="8" fill="#1D9E75" stroke="#0F6E56" stroke-width="1"/>
+  <text x="340" y="123" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">DataLoader</text>
+
+  <line x1="250" y1="118" x2="180" y2="148" stroke="#888780" stroke-width="1" marker-end="url(#a1)"/>
+  <line x1="290" y1="140" x2="240" y2="195" stroke="#888780" stroke-width="1" marker-end="url(#a1)"/>
+  <line x1="340" y1="140" x2="340" y2="195" stroke="#888780" stroke-width="1" marker-end="url(#a1)"/>
+  <line x1="390" y1="140" x2="440" y2="195" stroke="#888780" stroke-width="1" marker-end="url(#a1)"/>
+  <line x1="430" y1="118" x2="520" y2="148" stroke="#888780" stroke-width="1" marker-end="url(#a1)"/>
+
+  <rect x="100" y="150" width="100" height="40" rx="6" fill="#7F77DD" stroke="#534AB7" stroke-width="1"/>
+  <text x="150" y="175" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="700">Queue</text>
+
+  <rect x="168" y="197" width="100" height="40" rx="6" fill="#7F77DD" stroke="#534AB7" stroke-width="1"/>
+  <text x="218" y="222" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="700">Heap</text>
+
+  <rect x="286" y="197" width="100" height="40" rx="6" fill="#5DCAA5" stroke="#1D9E75" stroke-width="1"/>
+  <text x="336" y="222" text-anchor="middle" font-family="Georgia" font-size="11" fill="#04342C" font-weight="700">AVL Tree</text>
+
+  <rect x="400" y="197" width="100" height="40" rx="6" fill="#7F77DD" stroke="#534AB7" stroke-width="1"/>
+  <text x="450" y="222" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="700">HashMap</text>
+
+  <rect x="480" y="150" width="100" height="40" rx="6" fill="#5DCAA5" stroke="#1D9E75" stroke-width="1"/>
+  <text x="530" y="175" text-anchor="middle" font-family="Georgia" font-size="11" fill="#04342C" font-weight="700">Graph</text>
+
+  <line x1="530" y1="190" x2="490" y2="238" stroke="#888780" stroke-width="1" marker-end="url(#a1)"/>
+  <line x1="530" y1="190" x2="570" y2="238" stroke="#888780" stroke-width="1" marker-end="url(#a1)"/>
+
+  <rect x="450" y="240" width="100" height="40" rx="6" fill="#BA7517" stroke="#854F0B" stroke-width="1"/>
+  <text x="500" y="265" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="700">Dijkstra</text>
+
+  <rect x="558" y="240" width="90" height="40" rx="6" fill="#BA7517" stroke="#854F0B" stroke-width="1"/>
+  <text x="603" y="265" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="700">Prim's</text>
+
+  <rect x="38" y="197" width="100" height="40" rx="6" fill="#E24B4A" stroke="#A32D2D" stroke-width="1"/>
+  <text x="88" y="222" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="700">Stack</text>
+  <line x1="100" y1="170" x2="88" y2="195" stroke="#888780" stroke-width="1" marker-end="url(#a1)"/>
+</svg>
+<p class="diagram-caption">Data flows from CSV through DataLoader into all seven structures simultaneously. Dijkstra and Prim's run on top of the Graph.</p>
+
+<hr>
+
+<h2>1. Stack: The Case Investigation Log</h2>
+<div class="structure-tag red">ONE STACK PER PATIENT</div>
+
+<p>In most systems a stack is global. In SENTINEL every single patient case carries its own private stack embedded inside it. This is the key design decision.</p>
+
+<p>Every time something happens to a patient, a new event gets pushed onto their personal stack. The stack builds the complete medical and investigative history of that case from day one.</p>
+
+<h3>What one stack node contains</h3>
+<ul>
+  <li>Timestamp of the event</li>
+  <li>Day number of the outbreak when it happened</li>
+  <li>Description of the event (registered, tested, quarantined, status changed)</li>
+  <li>Officer note explaining the decision made</li>
+</ul>
+
+<svg width="100%" viewBox="0 0 680 260" role="img">
+  <title>Patient P003 personal stack showing investigation events</title>
+  <desc>A stack for patient P003 showing four pushed events with the most recent at top</desc>
+
+  <text x="100" y="30" text-anchor="middle" font-family="Georgia" font-size="13" fill="#534AB7" font-weight="700">P003: Bilal Hussain</text>
+  <text x="100" y="48" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">personal stack</text>
+
+  <rect x="160" y="200" width="460" height="48" rx="6" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="1"/>
+  <text x="390" y="220" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">Day 2: Registered. Status: positive</text>
+  <text x="390" y="236" text-anchor="middle" font-family="Georgia" font-size="11" fill="#888780">Note: Initial intake from CSV. High risk score 90.</text>
+
+  <rect x="160" y="148" width="460" height="48" rx="6" fill="#D3D1C7" stroke="#888780" stroke-width="1"/>
+  <text x="390" y="168" text-anchor="middle" font-family="Georgia" font-size="11" fill="#444441">Day 4: Contact tracing initiated</text>
+  <text x="390" y="184" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">Note: 3 contacts identified. P006, P008 flagged.</text>
+
+  <rect x="160" y="96" width="460" height="48" rx="6" fill="#AFA9EC" stroke="#7F77DD" stroke-width="1"/>
+  <text x="390" y="116" text-anchor="middle" font-family="Georgia" font-size="11" fill="#26215C">Day 5: Quarantine enforced</text>
+  <text x="390" y="132" text-anchor="middle" font-family="Georgia" font-size="11" fill="#3C3489">Note: Home isolation ordered. Risk to area B2.</text>
+
+  <rect x="160" y="44" width="460" height="48" rx="6" fill="#534AB7" stroke="#3C3489" stroke-width="1.5"/>
+  <text x="390" y="64" text-anchor="middle" font-family="Georgia" font-size="11" fill="#CECBF6">Day 8: Condition worsened: TOP</text>
+  <text x="390" y="80" text-anchor="middle" font-family="Georgia" font-size="11" fill="#EEEDFE">Note: Referred to hospital. Status updated.</text>
+
+  <text x="100" y="75" text-anchor="middle" font-family="Georgia" font-size="12" fill="#534AB7" font-weight="700">TOP</text>
+  <text x="100" y="230" text-anchor="middle" font-family="Georgia" font-size="12" fill="#888780">BOTTOM</text>
+
+  <text x="650" y="68" text-anchor="middle" font-family="Georgia" font-size="11" fill="#534AB7">← most</text>
+  <text x="650" y="82" text-anchor="middle" font-family="Georgia" font-size="11" fill="#534AB7">recent</text>
+  <text x="650" y="224" text-anchor="middle" font-family="Georgia" font-size="11" fill="#888780">← oldest</text>
+</svg>
+<p class="diagram-caption">Each patient has their own stack. Events are pushed as they happen. Pop from top to review the most recent event first. This is the complete case file.</p>
+
+<div class="callout">
+  When a health officer reviews a case they pop the stack to see the most recent event first. When investigating how a case evolved from the beginning they can traverse from bottom to top. The stack is simultaneously a live log and a forensic record.
+</div>
+
+<hr>
+
+<h2>2. Queue: The Master Case Pipeline</h2>
+<div class="structure-tag">FIFO CASE PROCESSING</div>
+
+<p>Every patient registered in SENTINEL enters the master queue in the order they were recorded. The queue is the spine of the entire system. Every case node in the queue contains everything about that patient including their personal stack.</p>
+
+<h3>What each queue node contains</h3>
+<ul>
+  <li>Patient ID and full profile (name, age, area code)</li>
+  <li>Day of registration as an integer from 0 to current outbreak day</li>
+  <li>Status: positive, negative, quarantined, recovered</li>
+  <li>Risk score calculated from symptom questionnaire</li>
+  <li>Their personal Stack of investigation events</li>
+  <li>Their contact list for graph edge building</li>
+</ul>
+
+<p>The day attribute is powerful. The queue can be traversed and filtered by day to produce a snapshot of exactly how many cases existed on any given day of the outbreak. This shows the growth curve of the epidemic.</p>
+
+<div class="callout amber">
+  The queue also powers BFS wave simulation. When you run the outbreak simulation, the queue processes patient zero first, adds their contacts to the back, then processes each of those, adds their contacts, and so on. Each layer of processing is one wave of infection spread.
+</div>
+
+<hr>
+
+<h2>3. Heap: Risk Priority Engine</h2>
+<div class="structure-tag amber">HIGHEST RISK ALWAYS ON TOP</div>
+
+<p>The heap answers one urgent question at any moment: who needs to be tested or quarantined right now? Not who arrived first. Not who has the highest ID. Who is the most dangerous untested person in the system.</p>
+
+<h3>How the risk score is calculated</h3>
+<p>When a patient is registered, they are scored on seven criteria. Each criterion adds points to their total score out of 130.</p>
+
+<div style="margin: 20px 0;">
+  <div class="score-row">
+    <div class="score-label">Breathing difficulty</div>
+    <div class="score-bar-wrap"><div class="score-bar" style="width:96%;background:#534AB7;"></div></div>
+    <div class="score-pts">25 pts</div>
+  </div>
+  <div class="score-row">
+    <div class="score-label">Known contact with confirmed case</div>
+    <div class="score-bar-wrap"><div class="score-bar" style="width:96%;background:#534AB7;"></div></div>
+    <div class="score-pts">25 pts</div>
+  </div>
+  <div class="score-row">
+    <div class="score-label">Fever</div>
+    <div class="score-bar-wrap"><div class="score-bar" style="width:77%;background:#7F77DD;"></div></div>
+    <div class="score-pts">20 pts</div>
+  </div>
+  <div class="score-row">
+    <div class="score-label">Age above 60 or comorbidity</div>
+    <div class="score-bar-wrap"><div class="score-bar" style="width:77%;background:#7F77DD;"></div></div>
+    <div class="score-pts">20 pts</div>
+  </div>
+  <div class="score-row">
+    <div class="score-label">Cough</div>
+    <div class="score-bar-wrap"><div class="score-bar" style="width:58%;background:#AFA9EC;"></div></div>
+    <div class="score-pts">15 pts</div>
+  </div>
+  <div class="score-row">
+    <div class="score-label">High contact job (hospital, school, market)</div>
+    <div class="score-bar-wrap"><div class="score-bar" style="width:58%;background:#AFA9EC;"></div></div>
+    <div class="score-pts">15 pts</div>
+  </div>
+  <div class="score-row">
+    <div class="score-label">Attended large gathering recently</div>
+    <div class="score-bar-wrap"><div class="score-bar" style="width:38%;background:#CECBF6;"></div></div>
+    <div class="score-pts">10 pts</div>
+  </div>
+</div>
+
+<p>The patient with score 130 has every risk factor. They sit at the top of the heap. When the heap is queried, that patient is returned instantly without any searching. When a patient's status changes, their score is recalculated and their position in the heap is updated.</p>
+
+<hr>
+
+<h2>4. AVL Tree: Date Range Search</h2>
+<div class="structure-tag green">PATIENTS INDEXED BY INFECTION DAY</div>
+
+<p>The AVL tree stores every patient indexed by their registration day. This enables something the queue and hashmap cannot do: range queries.</p>
+
+<p>A health officer can ask: show me every patient registered between day 5 and day 12. The AVL tree handles this efficiently by traversing only the relevant subtree. The HashMap would require scanning every record. The queue would require walking the entire chain.</p>
+
+<svg width="100%" viewBox="0 0 680 250" role="img">
+  <title>AVL tree indexed by outbreak day</title>
+  <desc>A balanced AVL tree where each node shows a day number and patient ID, with a range query highlighting nodes between day 5 and day 12</desc>
+
+  <line x1="340" y1="58" x2="200" y2="118" stroke="#B4B2A9" stroke-width="1"/>
+  <line x1="340" y1="58" x2="480" y2="118" stroke="#B4B2A9" stroke-width="1"/>
+  <line x1="200" y1="152" x2="120" y2="205" stroke="#B4B2A9" stroke-width="1"/>
+  <line x1="200" y1="152" x2="280" y2="205" stroke="#B4B2A9" stroke-width="1"/>
+  <line x1="480" y1="152" x2="400" y2="205" stroke="#B4B2A9" stroke-width="1"/>
+  <line x1="480" y1="152" x2="560" y2="205" stroke="#B4B2A9" stroke-width="1"/>
+
+  <circle cx="340" cy="42" r="30" fill="#1D9E75" stroke="#0F6E56" stroke-width="1.5"/>
+  <text x="340" y="37" text-anchor="middle" font-family="Georgia" font-size="10" fill="#E1F5EE">day 13</text>
+  <text x="340" y="52" text-anchor="middle" font-family="Georgia" font-size="12" fill="#fff" font-weight="700">P025</text>
+
+  <circle cx="200" cy="135" r="28" fill="#1D9E75" stroke="#0F6E56" stroke-width="1.5"/>
+  <text x="200" y="130" text-anchor="middle" font-family="Georgia" font-size="10" fill="#E1F5EE">day 8</text>
+  <text x="200" y="144" text-anchor="middle" font-family="Georgia" font-size="12" fill="#fff" font-weight="700">P015</text>
+
+  <circle cx="480" cy="135" r="28" fill="#5DCAA5" stroke="#1D9E75" stroke-width="1"/>
+  <text x="480" y="130" text-anchor="middle" font-family="Georgia" font-size="10" fill="#E1F5EE">day 18</text>
+  <text x="480" y="144" text-anchor="middle" font-family="Georgia" font-size="12" fill="#04342C" font-weight="700">P033</text>
+
+  <circle cx="120" cy="218" r="26" fill="#1D9E75" stroke="#0F6E56" stroke-width="1.5"/>
+  <text x="120" y="213" text-anchor="middle" font-family="Georgia" font-size="10" fill="#E1F5EE">day 5</text>
+  <text x="120" y="227" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="700">P009</text>
+
+  <circle cx="280" cy="218" r="26" fill="#1D9E75" stroke="#0F6E56" stroke-width="1.5"/>
+  <text x="280" y="213" text-anchor="middle" font-family="Georgia" font-size="10" fill="#E1F5EE">day 11</text>
+  <text x="280" y="227" text-anchor="middle" font-family="Georgia" font-size="11" fill="#fff" font-weight="700">P021</text>
+
+  <circle cx="400" cy="218" r="26" fill="#9FE1CB" stroke="#1D9E75" stroke-width="1"/>
+  <text x="400" y="213" text-anchor="middle" font-family="Georgia" font-size="10" fill="#085041">day 15</text>
+  <text x="400" y="227" text-anchor="middle" font-family="Georgia" font-size="11" fill="#04342C" font-weight="700">P029</text>
+
+  <circle cx="560" cy="218" r="26" fill="#9FE1CB" stroke="#1D9E75" stroke-width="1"/>
+  <text x="560" y="213" text-anchor="middle" font-family="Georgia" font-size="10" fill="#085041">day 22</text>
+  <text x="560" y="227" text-anchor="middle" font-family="Georgia" font-size="11" fill="#04342C" font-weight="700">P043</text>
+
+  <text x="170" y="30" text-anchor="middle" font-family="Georgia" font-size="11" fill="#1D9E75" font-weight="700">range query: day 5 to day 12</text>
+  <text x="170" y="46" text-anchor="middle" font-family="Georgia" font-size="11" fill="#1D9E75">returns P009, P015, P021</text>
+</svg>
+<p class="diagram-caption">AVL tree indexed by day. A range query for day 5 to 12 instantly returns P009 (day 5), P015 (day 8), P021 (day 11). The tree skips everything outside the range without checking it.</p>
+
+<p>The tree also keeps records in sorted chronological order at all times due to its BST property. Displaying all patients sorted by registration day is simply an inorder traversal. No sorting step needed.</p>
+
+<hr>
+
+<h2>5. HashMap: Dual Lookup System</h2>
+<div class="structure-tag gray">TWO HASHMAPS WORKING IN PARALLEL</div>
+
+<p>SENTINEL uses two separate hashmaps. They solve two completely different lookup problems.</p>
+
+<div class="map-row">
+  <div class="map-left">
+    <div class="map-label">HASHMAP ONE: PERSON PROFILES</div>
+    <p style="margin:8px 0;font-size:0.95rem;"><strong>Key:</strong> Patient ID like P003</p>
+    <p style="margin:8px 0;font-size:0.95rem;"><strong>Value:</strong> Pointer to full Case object</p>
+    <p style="margin:8px 0;font-size:0.95rem;"><strong>Use:</strong> Any time the system needs a specific patient instantly. Search, update, status change, log review.</p>
+  </div>
+  <div class="map-right">
+    <div class="map-label">HASHMAP TWO: LOCATION INDEX</div>
+    <p style="margin:8px 0;font-size:0.95rem;"><strong>Key:</strong> Area code like A1 or B2</p>
+    <p style="margin:8px 0;font-size:0.95rem;"><strong>Value:</strong> List of all patient IDs in that area</p>
+    <p style="margin:8px 0;font-size:0.95rem;"><strong>Use:</strong> Instantly know how many cases are in each zone. Detect hotspots. Compare area loads.</p>
+  </div>
+</div>
+
+<p>When a new case is registered, both hashmaps are updated simultaneously. The person hashmap gets the new patient. The location hashmap adds the patient ID to their area's list.</p>
+
+<div class="callout teal">
+  The location hashmap reveals hotspots instantly. If area B2 has 14 entries and area D4 has 2, that single lookup tells you where to send testing teams without querying anything else.
+</div>
+
+<hr>
+
+<h2>6. Graph: The Contact Network</h2>
+<div class="structure-tag teal">PEOPLE AS NODES, CONTACTS AS WEIGHTED EDGES</div>
+
+<p>The graph is the skeleton of the entire system. Everything else stores data about individuals. The graph stores relationships between individuals. This is what makes epidemic tracking possible rather than just patient record keeping.</p>
+
+<h3>How the graph is built</h3>
+<p>Every patient loaded from the CSV becomes a node. Every contact record loaded from the contacts CSV becomes a weighted edge between two patient nodes. The edge weight is the transmission risk score calculated from:</p>
+<ul>
+  <li>Duration of contact in minutes</li>
+  <li>Type of location (indoor contact is riskier than outdoor)</li>
+  <li>Day the contact occurred</li>
+</ul>
+
+<svg width="100%" viewBox="0 0 680 260" role="img">
+  <title>SENTINEL contact graph showing patients as nodes and weighted contact edges</title>
+  <desc>Seven patient nodes connected by edges with risk weights, showing a realistic contact network with area codes</desc>
+
+  <line x1="200" y1="100" x2="340" y2="70" stroke="#7F77DD" stroke-width="2"/>
+  <line x1="200" y1="100" x2="160" y2="200" stroke="#AFA9EC" stroke-width="1.5"/>
+  <line x1="340" y1="70" x2="480" y2="100" stroke="#534AB7" stroke-width="3"/>
+  <line x1="340" y1="70" x2="340" y2="190" stroke="#7F77DD" stroke-width="2"/>
+  <line x1="480" y1="100" x2="540" y2="200" stroke="#AFA9EC" stroke-width="1.5"/>
+  <line x1="160" y1="200" x2="340" y2="190" stroke="#534AB7" stroke-width="2.5"/>
+  <line x1="340" y1="190" x2="480" y2="100" stroke="#7F77DD" stroke-width="2"/>
+
+  <text x="268" y="72" text-anchor="middle" font-family="Georgia" font-size="11" fill="#534AB7" font-weight="700">w:7</text>
+  <text x="172" y="155" text-anchor="middle" font-family="Georgia" font-size="11" fill="#888780">w:3</text>
+  <text x="418" y="72" text-anchor="middle" font-family="Georgia" font-size="11" fill="#534AB7" font-weight="700">w:9</text>
+  <text x="348" y="132" text-anchor="middle" font-family="Georgia" font-size="11" fill="#534AB7">w:8</text>
+  <text x="515" y="158" text-anchor="middle" font-family="Georgia" font-size="11" fill="#888780">w:4</text>
+  <text x="250" y="205" text-anchor="middle" font-family="Georgia" font-size="11" fill="#534AB7" font-weight="700">w:8</text>
+  <text x="415" y="155" text-anchor="middle" font-family="Georgia" font-size="11" fill="#534AB7">w:7</text>
+
+  <circle cx="200" cy="100" r="30" fill="#534AB7" stroke="#3C3489" stroke-width="1.5"/>
+  <text x="200" y="95" text-anchor="middle" font-family="Georgia" font-size="11" fill="#CECBF6">P001</text>
+  <text x="200" y="110" text-anchor="middle" font-family="Georgia" font-size="10" fill="#EEEDFE">A1</text>
+
+  <circle cx="340" cy="70" r="30" fill="#534AB7" stroke="#3C3489" stroke-width="1.5"/>
+  <text x="340" y="65" text-anchor="middle" font-family="Georgia" font-size="11" fill="#CECBF6">P002</text>
+  <text x="340" y="80" text-anchor="middle" font-family="Georgia" font-size="10" fill="#EEEDFE">A1</text>
+
+  <circle cx="480" cy="100" r="30" fill="#A32D2D" stroke="#791F1F" stroke-width="2"/>
+  <text x="480" y="95" text-anchor="middle" font-family="Georgia" font-size="11" fill="#F7C1C1">P003</text>
+  <text x="480" y="110" text-anchor="middle" font-family="Georgia" font-size="10" fill="#FCEBEB">B2</text>
+
+  <circle cx="160" cy="200" r="28" fill="#7F77DD" stroke="#534AB7" stroke-width="1"/>
+  <text x="160" y="195" text-anchor="middle" font-family="Georgia" font-size="11" fill="#EEEDFE">P004</text>
+  <text x="160" y="208" text-anchor="middle" font-family="Georgia" font-size="10" fill="#EEEDFE">A1</text>
+
+  <circle cx="340" cy="190" r="28" fill="#7F77DD" stroke="#534AB7" stroke-width="1"/>
+  <text x="340" y="185" text-anchor="middle" font-family="Georgia" font-size="11" fill="#EEEDFE">P010</text>
+  <text x="340" y="198" text-anchor="middle" font-family="Georgia" font-size="10" fill="#EEEDFE">A1</text>
+
+  <circle cx="540" cy="200" r="28" fill="#5DCAA5" stroke="#1D9E75" stroke-width="1"/>
+  <text x="540" y="195" text-anchor="middle" font-family="Georgia" font-size="11" fill="#04342C">P006</text>
+  <text x="540" y="208" text-anchor="middle" font-family="Georgia" font-size="10" fill="#085041">B2</text>
+
+  <text x="600" y="100" text-anchor="start" font-family="Georgia" font-size="11" fill="#A32D2D" font-weight="700">P003</text>
+  <text x="600" y="116" text-anchor="start" font-family="Georgia" font-size="11" fill="#A32D2D">high risk</text>
+  <text x="600" y="132" text-anchor="start" font-family="Georgia" font-size="11" fill="#A32D2D">hub node</text>
+</svg>
+<p class="diagram-caption">The contact graph. Edge thickness represents risk weight. P003 (red) is a hub connected to multiple others with high risk edges. This pattern identifies super spreaders.</p>
+
+<p>Nodes tagged with area codes mean you can isolate the subgraph of any single zone. All nodes tagged A1 and their edges form the internal transmission network of zone A1. Edges between an A1 node and a B2 node reveal inter-zone transmission happening.</p>
+
+<hr>
+
+<h2>7. Dijkstra: Transmission Path Tracer</h2>
+<div class="structure-tag amber">SHORTEST TRANSMISSION CHAIN FROM SOURCE TO TARGET</div>
+
+<p>When a new person tests positive, the immediate question is: how did the virus reach this person? Which chain of contacts is the most probable transmission route from patient zero to them?</p>
+
+<p>Dijkstra runs on the contact graph with one modification. Higher edge weight means higher transmission risk. So we invert the weights when calculating distance: a high risk contact becomes a short distance. Dijkstra naturally finds the path of shortest distance, which in our context means the path of highest total transmission probability.</p>
+
+<p>The output is an exact chain. P001 infected P002 at a wedding on day 1. P002 infected P011 at a clinic on day 3. P011 infected the new patient at a market on day 7. This chain tells investigators exactly who to interview and which contacts to urgently test next.</p>
+
+<div class="callout green">
+  Dijkstra does not guess. It mathematically guarantees the optimal path given the weights. Every link in the output chain is the strongest evidence available for that transmission step.
+</div>
+
+<hr>
+
+<h2>8. Prim's: Minimum Containment Network</h2>
+<div class="structure-tag teal">SURGICAL QUARANTINE TARGETING</div>
+
+<p>When a cluster of cases forms, the health authority cannot quarantine everyone. Resources are limited. Prim's finds the minimum set of contact links that hold the entire cluster together.</p>
+
+<p>These links are the critical bridges. The people who are connected to multiple sub-groups. If you quarantine these specific bridge people you do not just isolate them. You split the cluster into disconnected pieces that cannot infect each other anymore.</p>
+
+<p>This is the difference between quarantining 40 people by guesswork and quarantining 8 people by graph mathematics and achieving the same containment result.</p>
+
+<div class="callout amber">
+  Prim's output is a list of contact links to break. Each link is two patient IDs and the risk weight between them. Break the highest weight links first and the cluster collapses fastest.
+</div>
+
+<hr>
+
+<h2>How They All Work Together: A Full Scenario</h2>
+
+<p>Day 9 of the outbreak. A new patient walks in. Here is what SENTINEL does in sequence:</p>
+
+<ol style="line-height:2.2;">
+  <li>A new Case object is created with their profile and symptom answers.</li>
+  <li>Their risk score is calculated. It is 90 out of 130.</li>
+  <li>The case is enqueued into the master Queue. They join the pipeline.</li>
+  <li>Their ID is inserted into the Heap at position matching score 90. They are near the top.</li>
+  <li>Their ID and day 9 is inserted into the AVL Tree.</li>
+  <li>Their ID is added to the person HashMap and their area code list in the location HashMap.</li>
+  <li>Their node is added to the Graph. Edges are drawn to their known contacts.</li>
+  <li>Dijkstra runs from patient zero to this new patient. The transmission chain is printed.</li>
+  <li>A push is made to their personal Stack: Day 9, registered, risk score 90, initial note.</li>
+  <li>Prim's runs on the updated graph. The minimum containment set is recalculated.</li>
+</ol>
+
+<p>Ten operations. All seven structures updated. The system now knows who this person is, where they rank by risk, when they were registered, what area they belong to, how the virus reached them, and which quarantine decisions their presence changes.</p>
+
+<hr>
+<p style="color:#5F5E5A; font-size:0.9rem; text-align:center; margin-top:40px;">Part 4 of 5 complete. Next: Project structure, file organization, how the code connects, and the full system walkthrough.</p>
+
+</body>
+</html>
