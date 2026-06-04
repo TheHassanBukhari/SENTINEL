@@ -3,205 +3,434 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SENTINEL Notes - Part 2: Data Structures</title>
+<title>Part 2: Data Structures — SENTINEL</title>
 <style>
-  body { font-family: Georgia, serif; max-width: 860px; margin: 0 auto; padding: 40px 24px; background: #fafaf8; color: #1a1a18; line-height: 1.8; }
-  h1 { font-size: 2rem; font-weight: 700; border-bottom: 3px solid #2c2c2a; padding-bottom: 12px; margin-bottom: 8px; }
-  h2 { font-size: 1.4rem; font-weight: 700; margin-top: 48px; color: #1a1a18; border-left: 4px solid #534AB7; padding-left: 12px; }
-  h3 { font-size: 1.1rem; font-weight: 700; margin-top: 28px; color: #3C3489; }
-  p { margin: 14px 0; font-size: 1rem; }
-  .subtitle { color: #5F5E5A; font-size: 1rem; margin-top: 4px; margin-bottom: 32px; }
-  .box { background: #fff; border: 1px solid #D3D1C7; border-radius: 10px; padding: 20px 24px; margin: 24px 0; }
-  .callout { background: #EEEDFE; border-left: 4px solid #534AB7; border-radius: 0 8px 8px 0; padding: 14px 20px; margin: 20px 0; font-size: 0.97rem; }
-  .callout.green { background: #EAF3DE; border-left-color: #3B6D11; }
-  .callout.amber { background: #FAEEDA; border-left-color: #854F0B; }
-  .callout.red { background: #FCEBEB; border-left-color: #A32D2D; }
-  code { background: #F1EFE8; border-radius: 4px; padding: 2px 7px; font-family: 'Courier New', monospace; font-size: 0.93rem; color: #3C3489; }
-  svg { display: block; margin: 24px auto; }
-  .diagram-caption { text-align: center; color: #5F5E5A; font-size: 0.88rem; margin-top: -12px; margin-bottom: 24px; font-style: italic; }
-  hr { border: none; border-top: 1px solid #D3D1C7; margin: 40px 0; }
-  .part-label { display: inline-block; background: #534AB7; color: #fff; border-radius: 20px; padding: 4px 16px; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 12px; }
-  .structure-label { display: inline-block; background: #F1EFE8; border: 1px solid #B4B2A9; border-radius: 6px; padding: 2px 10px; font-size: 0.82rem; font-weight: 700; color: #444441; margin-bottom: 6px; letter-spacing: 0.04em; }
-  ul li { margin: 6px 0; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: #f7f6f3;
+    color: #1a1a18;
+    line-height: 1.85;
+  }
+
+  .topbar {
+    background: #0f0e0c;
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .topbar-brand {
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #5F5E5A;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .topbar-brand span { color: #AFA9EC; }
+
+  .topbar-nav {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .topbar-nav a {
+    font-size: 0.82rem;
+    color: #5F5E5A;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .topbar-nav a:hover { color: #c2c0b6; }
+
+  .page-hero {
+    background: #0f0e0c;
+    border-bottom: 1px solid #2c2c2a;
+    padding: 48px 32px 40px;
+  }
+
+  .page-hero-inner {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .part-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #1a1a18;
+    border: 1px solid #1D9E75;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #5DCAA5;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .part-pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #1D9E75;
+  }
+
+  .page-hero h1 {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .page-hero-sub {
+    font-size: 1rem;
+    color: #888780;
+    max-width: 580px;
+    line-height: 1.7;
+  }
+
+  .content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 52px 32px 80px;
+  }
+
+  .structure-block {
+    margin-top: 64px;
+  }
+
+  .structure-block:first-of-type {
+    margin-top: 0;
+  }
+
+  .structure-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+  }
+
+  .structure-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .icon-purple { background: #534AB7; }
+  .icon-amber  { background: #BA7517; }
+  .icon-teal   { background: #0F6E56; }
+  .icon-green  { background: #1D9E75; }
+  .icon-coral  { background: #993C1D; }
+
+  .structure-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1a1a18;
+  }
+
+  .structure-rule {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #888780;
+    margin-bottom: 20px;
+    padding-left: 54px;
+  }
+
+  h3 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    margin-top: 28px;
+    margin-bottom: 10px;
+    color: #3C3489;
+  }
+
+  p {
+    font-size: 1rem;
+    margin-bottom: 16px;
+    color: #1a1a18;
+  }
+
+  .section-intro {
+    font-size: 1.02rem;
+    color: #5F5E5A;
+    margin-bottom: 16px;
+    line-height: 1.75;
+  }
+
+  .callout {
+    border-radius: 0 10px 10px 0;
+    padding: 16px 22px;
+    margin: 24px 0;
+    font-size: 0.96rem;
+    line-height: 1.7;
+    border-left: 4px solid;
+  }
+
+  .callout-purple { background: #EEEDFE; border-color: #534AB7; color: #26215C; }
+  .callout-green  { background: #EAF3DE; border-color: #3B6D11; color: #173404; }
+  .callout-amber  { background: #FAEEDA; border-color: #854F0B; color: #412402; }
+  .callout-teal   { background: #E1F5EE; border-color: #0F6E56; color: #04342C; }
+  .callout strong { font-weight: 700; }
+
+  code {
+    background: #EEEDFE;
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #3C3489;
+  }
+
+  svg { display: block; margin: 28px auto; }
+
+  .caption {
+    text-align: center;
+    font-size: 0.86rem;
+    color: #888780;
+    font-style: italic;
+    margin-top: -14px;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #E8E6DF;
+    margin: 56px 0 0;
+  }
+
+  ul {
+    padding-left: 22px;
+    margin-bottom: 16px;
+  }
+
+  ul li {
+    margin-bottom: 8px;
+    font-size: 1rem;
+  }
+
+  .nav-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 64px;
+    padding-top: 28px;
+    border-top: 1px solid #E8E6DF;
+  }
+
+  .nav-footer a {
+    font-size: 0.9rem;
+    color: #534AB7;
+    text-decoration: none;
+    font-weight: 700;
+    transition: color 0.15s;
+  }
+
+  .nav-footer a:hover { color: #3C3489; }
 </style>
 </head>
 <body>
 
-<div class="part-label">PART 2 OF 5</div>
-<h1>Data Structures: Stack, Queue, Heap, AVL Tree, HashMap</h1>
-<p class="subtitle">Each structure explained from scratch. Pure concept, no project context yet. That comes in Part 4.</p>
+<div class="topbar">
+  <a class="topbar-brand" href="index.html"><span>SENTINEL</span> — Study Notes</a>
+  <nav class="topbar-nav">
+    <a href="index.html">Index</a>
+    <a href="part1_foundations.html">← Part 1</a>
+    <a href="part3_graphs_algorithms.html">Part 3 →</a>
+  </nav>
+</div>
 
-<hr>
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="part-pill"><div class="part-pill-dot"></div>Part 2 of 5</div>
+    <h1>Data Structures: Stack, Queue, Heap, AVL Tree, HashMap</h1>
+    <p class="page-hero-sub">Five structures, each solving a problem the others cannot. Explained from scratch with diagrams. Pure concept here, no project context yet. That comes in Part 4.</p>
+  </div>
+</div>
 
-<h2>1. Stack</h2>
-<div class="structure-label">LIFO: Last In, First Out</div>
+<div class="content">
 
-<p>Imagine a stack of plates in a kitchen. You put a new plate on top. When you need a plate you take from the top. You cannot take from the middle or the bottom without removing everything above it first.</p>
+  <div class="structure-block">
+    <div class="structure-header">
+      <div class="structure-icon icon-purple">S</div>
+      <div class="structure-title">Stack</div>
+    </div>
+    <div class="structure-rule">LIFO — Last In, First Out</div>
 
-<p>That is the entire idea of a stack. The last thing you put in is the first thing you get out. This rule is called LIFO: Last In First Out.</p>
+    <p class="section-intro">Imagine a stack of plates in a kitchen. You put a new plate on top. When you need one, you take from the top. You cannot take from the middle without removing everything above it first.</p>
 
-<h3>Two operations only</h3>
-<ul>
-  <li><code>push</code>: add something to the top</li>
-  <li><code>pop</code>: remove and return the top item</li>
-</ul>
-<p>There is also <code>peek</code> which lets you look at the top item without removing it.</p>
+    <p>That is the entire idea. The last thing you put in is the first thing you get out. This rule is called LIFO: Last In First Out.</p>
+
+    <h3>Two operations</h3>
+    <ul>
+      <li><code>push</code> — add something to the top</li>
+      <li><code>pop</code> — remove and return the top item</li>
+      <li><code>peek</code> — look at the top item without removing it</li>
+    </ul>
 
 <svg width="100%" viewBox="0 0 680 280" role="img">
   <title>Stack push and pop operations</title>
   <desc>Three items stacked vertically showing push adding to top and pop removing from top</desc>
   <defs><marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
-
   <rect x="220" y="180" width="200" height="50" rx="6" fill="#EAF3DE" stroke="#3B6D11" stroke-width="1"/>
-  <text x="320" y="210" text-anchor="middle" font-family="Georgia" font-size="13" fill="#1a1a18" font-weight="700">Event 1: oldest</text>
-
+  <text x="320" y="210" text-anchor="middle" font-family="Georgia" font-size="13" fill="#1a1a18" font-weight="700">Event 1 — oldest</text>
   <rect x="220" y="122" width="200" height="50" rx="6" fill="#C0DD97" stroke="#3B6D11" stroke-width="1"/>
   <text x="320" y="152" text-anchor="middle" font-family="Georgia" font-size="13" fill="#1a1a18" font-weight="700">Event 2</text>
-
   <rect x="220" y="64" width="200" height="50" rx="6" fill="#639922" stroke="#3B6D11" stroke-width="1.5"/>
-  <text x="320" y="94" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">Event 3: TOP</text>
-
+  <text x="320" y="94" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">Event 3 — TOP</text>
   <text x="460" y="92" text-anchor="start" font-family="Georgia" font-size="12" fill="#3B6D11" font-weight="700">← pop() takes from here</text>
   <text x="460" y="112" text-anchor="start" font-family="Georgia" font-size="12" fill="#3B6D11">← push() adds here</text>
-
   <line x1="320" y1="20" x2="320" y2="62" stroke="#534AB7" stroke-width="1.5" marker-end="url(#a1)"/>
   <text x="320" y="16" text-anchor="middle" font-family="Georgia" font-size="12" fill="#534AB7">new item being pushed</text>
-
   <text x="100" y="92" text-anchor="middle" font-family="Georgia" font-size="12" fill="#534AB7" font-weight="700">TOP</text>
   <text x="100" y="210" text-anchor="middle" font-family="Georgia" font-size="12" fill="#5F5E5A">BOTTOM</text>
-
   <line x1="130" y1="64" x2="218" y2="64" stroke="#D3D1C7" stroke-width="0.5" stroke-dasharray="4 3"/>
   <line x1="130" y1="230" x2="218" y2="230" stroke="#D3D1C7" stroke-width="0.5" stroke-dasharray="4 3"/>
 </svg>
-<p class="diagram-caption">Stack grows upward. push adds to the top. pop removes from the top. The bottom item is always the oldest.</p>
+<p class="caption">Stack grows upward. push adds to the top. pop removes from the top. The bottom item is always the oldest.</p>
 
-<h3>How it is implemented with a linked list</h3>
-<p>The top of the stack is simply the HEAD of the linked list. Push means insert at HEAD. Pop means remove from HEAD. Both are instant, one step operations regardless of how many items are in the stack.</p>
+    <h3>Implementation with a linked list</h3>
+    <p>The top of the stack is the HEAD of the linked list. Push means insert at HEAD. Pop means remove from HEAD. Both are instant, single step operations regardless of how many items the stack holds.</p>
 
-<div class="callout green">
-  <strong>Real world use:</strong> Your browser's back button is a stack. Every page you visit gets pushed. When you press back, the current page gets popped and you return to the one below it.
-</div>
+    <div class="callout callout-green">
+      <strong>Real world parallel:</strong> Your browser's back button is a stack. Every page you visit gets pushed onto it. When you press back, the current page is popped and you return to the one below it.
+    </div>
+  </div>
 
-<hr>
+  <hr class="divider">
 
-<h2>2. Queue</h2>
-<div class="structure-label">FIFO: First In, First Out</div>
+  <div class="structure-block">
+    <div class="structure-header">
+      <div class="structure-icon icon-amber">Q</div>
+      <div class="structure-title">Queue</div>
+    </div>
+    <div class="structure-rule">FIFO — First In, First Out</div>
 
-<p>A queue is the opposite rule. Think of people standing in line at a hospital registration counter. The first person to arrive gets served first. No jumping the line.</p>
+    <p class="section-intro">The opposite rule from a stack. Think of people standing in line at a hospital counter. The first person to arrive gets served first. No jumping the line, no exceptions.</p>
 
-<p>This rule is called FIFO: First In First Out.</p>
+    <p>This is called FIFO: First In First Out. Order of arrival is the only thing that matters.</p>
 
-<h3>Two operations</h3>
-<ul>
-  <li><code>enqueue</code>: add to the back of the line</li>
-  <li><code>dequeue</code>: remove from the front of the line</li>
-</ul>
+    <h3>Two operations</h3>
+    <ul>
+      <li><code>enqueue</code> — add to the back of the line</li>
+      <li><code>dequeue</code> — remove from the front of the line</li>
+    </ul>
 
 <svg width="100%" viewBox="0 0 680 160" role="img">
   <title>Queue showing enqueue at back and dequeue at front</title>
   <desc>Four items in a horizontal line with enqueue adding at right and dequeue removing from left</desc>
   <defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
-
   <rect x="120" y="55" width="110" height="55" rx="6" fill="#FAEEDA" stroke="#854F0B" stroke-width="1.5"/>
   <text x="175" y="82" text-anchor="middle" font-family="Georgia" font-size="12" fill="#1a1a18" font-weight="700">P001</text>
   <text x="175" y="98" text-anchor="middle" font-family="Georgia" font-size="11" fill="#854F0B">oldest</text>
-
   <rect x="238" y="55" width="110" height="55" rx="6" fill="#FAC775" stroke="#854F0B" stroke-width="1"/>
   <text x="293" y="87" text-anchor="middle" font-family="Georgia" font-size="12" fill="#1a1a18" font-weight="700">P002</text>
-
   <rect x="356" y="55" width="110" height="55" rx="6" fill="#FAC775" stroke="#854F0B" stroke-width="1"/>
   <text x="411" y="87" text-anchor="middle" font-family="Georgia" font-size="12" fill="#1a1a18" font-weight="700">P003</text>
-
   <rect x="474" y="55" width="110" height="55" rx="6" fill="#EF9F27" stroke="#854F0B" stroke-width="1"/>
   <text x="529" y="82" text-anchor="middle" font-family="Georgia" font-size="12" fill="#1a1a18" font-weight="700">P004</text>
   <text x="529" y="98" text-anchor="middle" font-family="Georgia" font-size="11" fill="#633806">newest</text>
-
   <line x1="600" y1="82" x2="586" y2="82" stroke="#854F0B" stroke-width="1.5" marker-end="url(#a2)"/>
   <text x="638" y="86" text-anchor="middle" font-family="Georgia" font-size="11" fill="#854F0B">enqueue</text>
-
   <line x1="80" y1="82" x2="118" y2="82" stroke="#3B6D11" stroke-width="1.5" marker-end="url(#a2)"/>
   <text x="42" y="86" text-anchor="middle" font-family="Georgia" font-size="11" fill="#3B6D11">dequeue</text>
-
   <text x="175" y="135" text-anchor="middle" font-family="Georgia" font-size="11" fill="#3B6D11" font-weight="700">FRONT</text>
   <text x="529" y="135" text-anchor="middle" font-family="Georgia" font-size="11" fill="#854F0B" font-weight="700">REAR</text>
 </svg>
-<p class="diagram-caption">Queue: new items join at the rear, items leave from the front. Order of arrival is always respected.</p>
+<p class="caption">Queue: new items join at the rear, items leave from the front. Arrival order is always preserved.</p>
 
-<h3>How it is implemented with a linked list</h3>
-<p>A queue keeps two pointers: <code>front</code> and <code>rear</code>. Enqueue adds a new node at the rear and updates the rear pointer. Dequeue removes the node at front and moves the front pointer forward.</p>
+    <h3>Implementation with a linked list</h3>
+    <p>A queue holds two pointers: <code>front</code> and <code>rear</code>. Enqueue adds a new node at rear and updates the rear pointer forward. Dequeue removes the node at front and moves the front pointer to the next node.</p>
 
-<div class="callout amber">
-  <strong>Key difference from stack:</strong> A stack has one access point (the top). A queue has two: you add at one end and remove at the other. The order of insertion is preserved perfectly.
-</div>
+    <div class="callout callout-amber">
+      <strong>Stack vs Queue:</strong> A stack has one access point at the top. A queue has two: you add at one end and remove from the other. The order of insertion is respected perfectly, which is exactly what you want when processing cases in the sequence they were reported.
+    </div>
+  </div>
 
-<hr>
+  <hr class="divider">
 
-<h2>3. Heap</h2>
-<div class="structure-label">Priority-based: highest priority always on top</div>
+  <div class="structure-block">
+    <div class="structure-header">
+      <div class="structure-icon icon-coral">H</div>
+      <div class="structure-title">Heap</div>
+    </div>
+    <div class="structure-rule">Priority-based — highest priority always on top</div>
 
-<p>A heap solves a problem neither a stack nor a queue can solve: what if you do not care about arrival order, but only about which item is most important right now?</p>
+    <p class="section-intro">A heap solves a problem neither a stack nor a queue can solve: what if you do not care about arrival order at all, but only about which item is the most critical right now?</p>
 
-<p>Imagine the hospital emergency room again. A person with a headache walked in before someone with a heart attack. The heart attack patient should not wait simply because they arrived second. Urgency overrides order.</p>
+    <p>Think of a hospital emergency room. A person with a headache arrived before someone with a heart attack. The heart attack patient should not wait simply because they arrived second. Urgency overrides order of arrival entirely.</p>
 
-<p>A max heap always keeps the highest priority item at the top. Whenever you ask for the next item, you always get the most critical one, not the oldest one.</p>
+    <p>A max heap always keeps the highest priority item at the very top. Whenever you ask for the next item, you always get the most critical one available, instantly.</p>
 
-<h3>The rule: parent is always greater than its children</h3>
-<p>A heap is shaped like a tree. Every parent node has a value greater than or equal to both its children. This single rule guarantees the maximum value is always at the root, the very top.</p>
+    <h3>The one rule: parent is always greater than its children</h3>
+    <p>A heap is shaped like a tree. Every parent node has a value greater than or equal to both its children. This single rule guarantees the maximum value sits at the root, always, no matter how many items are in the heap.</p>
 
 <svg width="100%" viewBox="0 0 680 280" role="img">
   <title>Max heap tree structure</title>
-  <desc>A tree where each parent node has a higher value than its children, with 95 at the root</desc>
-  <defs><marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
-
+  <desc>A tree where each parent node has a higher priority score than its children with 95 at the root</desc>
   <line x1="340" y1="95" x2="220" y2="155" stroke="#B4B2A9" stroke-width="1"/>
   <line x1="340" y1="95" x2="460" y2="155" stroke="#B4B2A9" stroke-width="1"/>
   <line x1="220" y1="195" x2="145" y2="240" stroke="#B4B2A9" stroke-width="1"/>
   <line x1="220" y1="195" x2="295" y2="240" stroke="#B4B2A9" stroke-width="1"/>
   <line x1="460" y1="195" x2="385" y2="240" stroke="#B4B2A9" stroke-width="1"/>
   <line x1="460" y1="195" x2="535" y2="240" stroke="#B4B2A9" stroke-width="1"/>
-
   <circle cx="340" cy="75" r="38" fill="#534AB7" stroke="#3C3489" stroke-width="1"/>
   <text x="340" y="70" text-anchor="middle" font-family="Georgia" font-size="11" fill="#CECBF6">risk score</text>
   <text x="340" y="88" text-anchor="middle" font-family="Georgia" font-size="16" fill="#fff" font-weight="700">95</text>
-
   <circle cx="220" cy="175" r="32" fill="#7F77DD" stroke="#534AB7" stroke-width="1"/>
   <text x="220" y="180" text-anchor="middle" font-family="Georgia" font-size="16" fill="#fff" font-weight="700">80</text>
-
   <circle cx="460" cy="175" r="32" fill="#7F77DD" stroke="#534AB7" stroke-width="1"/>
   <text x="460" y="180" text-anchor="middle" font-family="Georgia" font-size="16" fill="#fff" font-weight="700">72</text>
-
   <circle cx="145" cy="255" r="26" fill="#AFA9EC" stroke="#534AB7" stroke-width="1"/>
   <text x="145" y="260" text-anchor="middle" font-family="Georgia" font-size="14" fill="#26215C" font-weight="700">65</text>
-
   <circle cx="295" cy="255" r="26" fill="#AFA9EC" stroke="#534AB7" stroke-width="1"/>
   <text x="295" y="260" text-anchor="middle" font-family="Georgia" font-size="14" fill="#26215C" font-weight="700">70</text>
-
   <circle cx="385" cy="255" r="26" fill="#AFA9EC" stroke="#534AB7" stroke-width="1"/>
   <text x="385" y="260" text-anchor="middle" font-family="Georgia" font-size="14" fill="#26215C" font-weight="700">55</text>
-
   <circle cx="535" cy="255" r="26" fill="#AFA9EC" stroke="#534AB7" stroke-width="1"/>
   <text x="535" y="260" text-anchor="middle" font-family="Georgia" font-size="14" fill="#26215C" font-weight="700">60</text>
-
   <text x="590" y="80" text-anchor="start" font-family="Georgia" font-size="12" fill="#534AB7" font-weight="700">← always maximum</text>
 </svg>
-<p class="diagram-caption">Max heap. The root always holds the largest value. Every parent is greater than its children. 95 is always available instantly at the top.</p>
+<p class="caption">Max heap. The root always holds the largest value. Every parent is greater than its children. 95 is always instantly accessible at the top.</p>
 
-<h3>How it is implemented with a linked list in SENTINEL</h3>
-<p>We maintain a sorted linked list where nodes are kept in descending order of priority score. The head of the list is always the highest priority item. Inserting a new item means walking the list to find the correct position and splicing it in. This preserves the heap guarantee using pure linked list logic.</p>
+    <h3>Implementation in SENTINEL</h3>
+    <p>We maintain a sorted linked list in descending order of priority score. The head is always the highest priority item. Inserting a new item means walking to find the correct position and splicing in. This preserves the heap property using pure linked list logic with no array involved.</p>
 
-<div class="callout">
-  <strong>The core guarantee:</strong> No matter how many items are in the heap, the most critical item is always instantly accessible at the top. You never have to search for it.
-</div>
+    <div class="callout callout-purple">
+      <strong>The core guarantee:</strong> No matter how many items the heap holds, the most critical one is always at the top. You never search for it. One step access, always.
+    </div>
+  </div>
 
-<hr>
+  <hr class="divider">
 
-<h2>4. AVL Tree</h2>
-<div class="structure-label">Self-balancing Binary Search Tree</div>
+  <div class="structure-block">
+    <div class="structure-header">
+      <div class="structure-icon icon-green">AVL</div>
+      <div class="structure-title">AVL Tree</div>
+    </div>
+    <div class="structure-rule">Self-balancing Binary Search Tree</div>
 
-<p>To understand an AVL tree, you need to understand a regular binary search tree first.</p>
+    <p class="section-intro">To understand an AVL tree you need to understand a regular binary search tree first, and then understand why it can fail.</p>
 
-<h3>Binary Search Tree (BST)</h3>
-<p>A BST is a tree where every node follows one rule: values smaller than the current node go to the left, values larger go to the right. This means searching is fast because at every step you eliminate half the remaining nodes.</p>
+    <h3>Binary Search Tree</h3>
+    <p>A BST follows one rule at every node: values smaller than the current node go left, values larger go right. Searching is fast because at every step you eliminate half the remaining possibilities.</p>
 
 <svg width="100%" viewBox="0 0 680 230" role="img">
   <title>Binary search tree example</title>
@@ -212,73 +441,56 @@
   <line x1="220" y1="152" x2="290" y2="195" stroke="#B4B2A9" stroke-width="1"/>
   <line x1="460" y1="152" x2="390" y2="195" stroke="#B4B2A9" stroke-width="1"/>
   <line x1="460" y1="152" x2="530" y2="195" stroke="#B4B2A9" stroke-width="1"/>
-
   <circle cx="340" cy="42" r="30" fill="#1D9E75" stroke="#0F6E56" stroke-width="1"/>
   <text x="340" y="47" text-anchor="middle" font-family="Georgia" font-size="15" fill="#fff" font-weight="700">50</text>
-
   <circle cx="220" cy="135" r="26" fill="#5DCAA5" stroke="#1D9E75" stroke-width="1"/>
   <text x="220" y="140" text-anchor="middle" font-family="Georgia" font-size="14" fill="#04342C" font-weight="700">30</text>
-
   <circle cx="460" cy="135" r="26" fill="#5DCAA5" stroke="#1D9E75" stroke-width="1"/>
   <text x="460" y="140" text-anchor="middle" font-family="Georgia" font-size="14" fill="#04342C" font-weight="700">70</text>
-
   <circle cx="150" cy="210" r="22" fill="#9FE1CB" stroke="#1D9E75" stroke-width="1"/>
   <text x="150" y="215" text-anchor="middle" font-family="Georgia" font-size="13" fill="#04342C" font-weight="700">20</text>
-
   <circle cx="290" cy="210" r="22" fill="#9FE1CB" stroke="#1D9E75" stroke-width="1"/>
   <text x="290" y="215" text-anchor="middle" font-family="Georgia" font-size="13" fill="#04342C" font-weight="700">40</text>
-
   <circle cx="390" cy="210" r="22" fill="#9FE1CB" stroke="#1D9E75" stroke-width="1"/>
   <text x="390" y="215" text-anchor="middle" font-family="Georgia" font-size="13" fill="#04342C" font-weight="700">60</text>
-
   <circle cx="530" cy="210" r="22" fill="#9FE1CB" stroke="#1D9E75" stroke-width="1"/>
   <text x="530" y="215" text-anchor="middle" font-family="Georgia" font-size="13" fill="#04342C" font-weight="700">80</text>
-
   <text x="100" y="140" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">smaller</text>
   <text x="580" y="140" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">larger</text>
 </svg>
-<p class="diagram-caption">BST. At every node: go left if smaller, go right if larger. Searching for 60 takes only 3 steps: check 50 (go right), check 70 (go left), found 60.</p>
+<p class="caption">BST rule at every node: go left if smaller, go right if larger. Finding 60 takes only 3 steps: check 50 (go right), check 70 (go left), found 60.</p>
 
-<h3>The problem: imbalance</h3>
-<p>If you insert data in sorted order, say 10, 20, 30, 40, 50, every node is larger than the previous so every node goes to the right. The tree becomes a straight line. You have lost all speed advantage. Searching now takes as long as scanning every item one by one.</p>
+    <h3>The problem: imbalance</h3>
+    <p>Insert values in sorted order, say 10, 20, 30, 40, and every node goes right because each is larger than the last. The tree becomes a diagonal line. All speed advantage is gone. Search now takes as long as checking every item one by one.</p>
 
 <svg width="100%" viewBox="0 0 680 220" role="img">
-  <title>Unbalanced BST becoming a straight line</title>
-  <desc>Five nodes each only having a right child forming a diagonal chain</desc>
-  <defs><marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
-
+  <title>Unbalanced BST degenerating into a line</title>
+  <desc>Four nodes each only having a right child forming a diagonal chain downward</desc>
   <circle cx="100" cy="40" r="24" fill="#E24B4A" stroke="#A32D2D" stroke-width="1"/>
   <text x="100" y="45" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">10</text>
-
   <line x1="120" y1="55" x2="188" y2="90" stroke="#A32D2D" stroke-width="1"/>
   <circle cx="200" cy="100" r="24" fill="#E24B4A" stroke="#A32D2D" stroke-width="1"/>
   <text x="200" y="105" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">20</text>
-
   <line x1="220" y1="115" x2="288" y2="148" stroke="#A32D2D" stroke-width="1"/>
   <circle cx="300" cy="158" r="24" fill="#E24B4A" stroke="#A32D2D" stroke-width="1"/>
   <text x="300" y="163" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">30</text>
-
   <line x1="320" y1="172" x2="388" y2="178" stroke="#A32D2D" stroke-width="1"/>
   <circle cx="400" cy="183" r="24" fill="#E24B4A" stroke="#A32D2D" stroke-width="1"/>
   <text x="400" y="188" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">40</text>
-
-  <text x="500" y="80" text-anchor="start" font-family="Georgia" font-size="13" fill="#A32D2D" font-weight="700">Degenerated into</text>
-  <text x="500" y="100" text-anchor="start" font-family="Georgia" font-size="13" fill="#A32D2D" font-weight="700">a linked list.</text>
-  <text x="500" y="124" text-anchor="start" font-family="Georgia" font-size="12" fill="#5F5E5A">No speed advantage.</text>
-  <text x="500" y="142" text-anchor="start" font-family="Georgia" font-size="12" fill="#5F5E5A">Search is now O(n).</text>
+  <text x="510" y="75" text-anchor="start" font-family="Georgia" font-size="13" fill="#A32D2D" font-weight="700">Degenerated into</text>
+  <text x="510" y="95" text-anchor="start" font-family="Georgia" font-size="13" fill="#A32D2D" font-weight="700">a linked list.</text>
+  <text x="510" y="120" text-anchor="start" font-family="Georgia" font-size="12" fill="#5F5E5A">No speed advantage.</text>
+  <text x="510" y="140" text-anchor="start" font-family="Georgia" font-size="12" fill="#5F5E5A">Search is now O(n).</text>
 </svg>
-<p class="diagram-caption">Inserting sorted values breaks the BST. Every node only has a right child. The tree is now just a slow diagonal line.</p>
+<p class="caption">Inserting sorted values breaks the BST entirely. Every node only has a right child. The tree is now a slow diagonal line.</p>
 
-<h3>AVL fix: automatic rotation</h3>
-<p>An AVL tree checks itself after every insertion. It measures the height difference between the left and right subtrees of every node. This difference is called the balance factor. If the balance factor goes beyond 1 in either direction, the tree rotates itself to rebalance.</p>
-
-<p>A rotation is simply a local restructuring where a child takes the place of its parent, keeping all the BST ordering rules intact. After rotation the tree is balanced again and search speed is restored.</p>
+    <h3>The AVL fix: automatic rotation</h3>
+    <p>After every insertion, an AVL tree checks whether either subtree has grown too tall compared to the other. This difference in height is called the balance factor. If it exceeds 1, the tree performs a rotation: a local restructuring where a child takes the place of its parent. The BST ordering is preserved. The tree is balanced again. Speed is restored.</p>
 
 <svg width="100%" viewBox="0 0 680 220" role="img">
   <title>AVL rotation restoring balance</title>
-  <desc>An unbalanced tree on the left transformed by rotation into a balanced tree on the right</desc>
+  <desc>Unbalanced tree on left rotated into balanced tree on right</desc>
   <defs><marker id="a5" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
-
   <text x="100" y="24" text-anchor="middle" font-family="Georgia" font-size="12" fill="#A32D2D" font-weight="700">unbalanced</text>
   <circle cx="100" cy="55" r="24" fill="#E24B4A" stroke="#A32D2D" stroke-width="1"/>
   <text x="100" y="60" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">10</text>
@@ -288,10 +500,8 @@
   <line x1="188" y1="130" x2="228" y2="158" stroke="#A32D2D" stroke-width="1"/>
   <circle cx="240" cy="168" r="24" fill="#E24B4A" stroke="#A32D2D" stroke-width="1"/>
   <text x="240" y="173" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">30</text>
-
   <line x1="310" y1="110" x2="370" y2="110" stroke="#534AB7" stroke-width="2" marker-end="url(#a5)"/>
   <text x="340" y="100" text-anchor="middle" font-family="Georgia" font-size="11" fill="#534AB7">rotate</text>
-
   <text x="530" y="24" text-anchor="middle" font-family="Georgia" font-size="12" fill="#3B6D11" font-weight="700">balanced</text>
   <circle cx="530" cy="60" r="24" fill="#1D9E75" stroke="#0F6E56" stroke-width="1"/>
   <text x="530" y="65" text-anchor="middle" font-family="Georgia" font-size="13" fill="#fff" font-weight="700">20</text>
@@ -302,77 +512,70 @@
   <circle cx="605" cy="120" r="24" fill="#5DCAA5" stroke="#1D9E75" stroke-width="1"/>
   <text x="605" y="125" text-anchor="middle" font-family="Georgia" font-size="13" fill="#04342C" font-weight="700">30</text>
 </svg>
-<p class="diagram-caption">AVL rotation. The unbalanced chain on the left is rotated so 20 becomes the root. Now both sides are equal and search is fast again.</p>
+<p class="caption">AVL rotation. 20 takes the root. 10 and 30 are now equal-depth children. Balance restored, speed restored.</p>
 
-<div class="callout green">
-  <strong>The guarantee:</strong> An AVL tree is always balanced no matter what order you insert data. Search, insert, and delete are all fast even with thousands of records.
-</div>
+    <div class="callout callout-green">
+      <strong>The guarantee:</strong> An AVL tree stays balanced no matter what order data arrives in. Search, insert, and delete remain fast even with thousands of records. This is why it is used for range queries in SENTINEL rather than scanning the queue linearly.
+    </div>
+  </div>
 
-<hr>
+  <hr class="divider">
 
-<h2>5. HashMap</h2>
-<div class="structure-label">Key-Value Store: near instant lookup</div>
+  <div class="structure-block">
+    <div class="structure-header">
+      <div class="structure-icon icon-teal">HM</div>
+      <div class="structure-title">HashMap</div>
+    </div>
+    <div class="structure-rule">Key-Value Store — near-instant lookup</div>
 
-<p>A HashMap solves one problem: how do you store and retrieve data instantly without searching through everything?</p>
+    <p class="section-intro">A HashMap solves one problem very well: how do you find a specific record instantly without searching through everything?</p>
 
-<p>Think of a dictionary. You do not read every page to find a word. You know that words starting with J are near the middle. You flip directly there. A HashMap does something similar but mathematically.</p>
+    <p>Think of a physical dictionary. You do not read from page one to find a word starting with J. You flip directly to the J section. A HashMap does something mathematically equivalent for any kind of key.</p>
 
-<h3>How it works: the hash function</h3>
-<p>You give it a key, like a patient ID. It runs that key through a mathematical function called a hash function. The hash function converts the key into a number. That number is used as an index into an array of slots. Your data goes into that slot.</p>
-
-<p>When you want the data back, you give the same key, the same hash function produces the same number, and you go directly to that slot. No searching.</p>
+    <h3>How the hash function works</h3>
+    <p>You give it a key, like a patient ID. It runs the key through a hash function that converts it into a number. That number is used as a direct index into a table of slots. Your data goes into that exact slot. When you want it back, the same key produces the same number and you go directly there.</p>
 
 <svg width="100%" viewBox="0 0 680 240" role="img">
   <title>HashMap hash function diagram</title>
-  <desc>A key P003 passes through a hash function to produce index 7 which points to a slot in the table</desc>
+  <desc>Key P003 passes through a hash function producing index 7 pointing to the correct slot</desc>
   <defs><marker id="a6" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
-
   <rect x="30" y="90" width="100" height="50" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
   <text x="80" y="118" text-anchor="middle" font-family="Georgia" font-size="14" fill="#26215C" font-weight="700">P003</text>
-
   <line x1="130" y1="115" x2="190" y2="115" stroke="#534AB7" stroke-width="1.5" marker-end="url(#a6)"/>
-
   <rect x="192" y="80" width="130" height="70" rx="8" fill="#F1EFE8" stroke="#888780" stroke-width="1"/>
   <text x="257" y="110" text-anchor="middle" font-family="Georgia" font-size="12" fill="#444441" font-weight="700">hash function</text>
   <text x="257" y="130" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">key → number</text>
-
   <line x1="322" y1="115" x2="382" y2="115" stroke="#534AB7" stroke-width="1.5" marker-end="url(#a6)"/>
   <text x="352" y="105" text-anchor="middle" font-family="Georgia" font-size="12" fill="#534AB7">index: 7</text>
-
   <rect x="384" y="30" width="90" height="40" rx="4" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="0.5"/>
   <text x="429" y="55" text-anchor="middle" font-family="Georgia" font-size="12" fill="#888780">slot 0</text>
   <rect x="384" y="76" width="90" height="40" rx="4" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="0.5"/>
   <text x="429" y="100" text-anchor="middle" font-family="Georgia" font-size="12" fill="#888780">slot 1</text>
   <rect x="384" y="122" width="90" height="40" rx="4" fill="#F1EFE8" stroke="#D3D1C7" stroke-width="0.5"/>
   <text x="429" y="146" text-anchor="middle" font-family="Georgia" font-size="12" fill="#888780">slot 2</text>
-
   <text x="429" y="182" text-anchor="middle" font-family="Georgia" font-size="14" fill="#5F5E5A">...</text>
-
   <rect x="384" y="192" width="90" height="40" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.5"/>
   <text x="429" y="217" text-anchor="middle" font-family="Georgia" font-size="12" fill="#26215C" font-weight="700">slot 7 ← P003</text>
-
   <line x1="474" y1="212" x2="560" y2="212" stroke="#534AB7" stroke-width="1.5" marker-end="url(#a6)"/>
   <rect x="562" y="192" width="88" height="40" rx="6" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
   <text x="606" y="210" text-anchor="middle" font-family="Georgia" font-size="11" fill="#04342C" font-weight="700">Bilal</text>
-  <text x="606" y="225" text-anchor="middle" font-family="Georgia" font-size="10" fill="#0F6E56">age 62, B2</text>
+  <text x="606" y="225" text-anchor="middle" font-family="Georgia" font-size="10" fill="#0F6E56">age 62, area B2</text>
 </svg>
-<p class="diagram-caption">Key P003 goes into the hash function, comes out as index 7, and the system goes directly to slot 7. No searching through slots 0 to 6.</p>
+<p class="caption">P003 goes into the hash function, comes out as index 7, system goes directly to slot 7. No scanning through slots 0 to 6.</p>
 
-<h3>Collisions and chaining</h3>
-<p>Sometimes two different keys produce the same index. This is called a collision. The solution is chaining: each slot holds a small linked list. If two keys land in the same slot, both their nodes sit in that slot's linked list. You walk the short chain to find your specific key.</p>
+    <h3>Collisions and chaining</h3>
+    <p>Sometimes two different keys produce the same index. This is a collision. The solution is chaining: each slot holds a small linked list. If two keys land in the same slot, both nodes live in that slot's chain. You walk the short chain to find your specific key.</p>
 
-<div class="callout amber">
-  <strong>Why this matters:</strong> With 50,000 patient records, a normal search checks up to 50,000 records. A HashMap checks one slot plus a tiny chain. The difference in speed is enormous.
+    <div class="callout callout-amber">
+      <strong>Why the speed difference is enormous:</strong> With 50,000 records, a linear search checks up to 50,000 items. A HashMap goes directly to one slot and walks a chain of maybe two or three. The hash function converts an O(n) problem into something approaching O(1).
+    </div>
+  </div>
+
+  <div class="nav-footer">
+    <a href="part1_foundations.html">← Part 1: Foundations</a>
+    <a href="part3_graphs_algorithms.html">Part 3: Graphs and Algorithms →</a>
+  </div>
+
 </div>
-
-<hr>
-
-<p style="color:#5F5E5A; font-size:0.9rem; text-align:center; margin-top:40px;">Part 2 of 5 complete. Next: Graphs, BFS, Dijkstra, and Prim's Algorithm explained from scratch.</p>
-
-<div style="display:flex; justify-content:space-between; align-items:center; margin-top:48px; padding-top:24px; border-top:1px solid #D3D1C7;">
-  <a href="part1_foundations.html" style="font-family:Georgia,serif; font-size:0.9rem; color:#534AB7; text-decoration:none;">← Part 1: Foundations</a>
-  <a href="part3_graphs_algorithms.html" style="font-family:Georgia,serif; font-size:0.9rem; color:#534AB7; text-decoration:none;">Part 3: Graphs and Algorithms →</a>
-</div>
-
 </body>
 </html>
