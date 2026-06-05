@@ -3,323 +3,633 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SENTINEL Notes - Part 5: Project Structure and Code Walkthrough</title>
+<title>Part 5: Project Structure — SENTINEL</title>
 <style>
-  body { font-family: Georgia, serif; max-width: 860px; margin: 0 auto; padding: 40px 24px; background: #fafaf8; color: #1a1a18; line-height: 1.8; }
-  h1 { font-size: 2rem; font-weight: 700; border-bottom: 3px solid #2c2c2a; padding-bottom: 12px; margin-bottom: 8px; }
-  h2 { font-size: 1.4rem; font-weight: 700; margin-top: 48px; color: #1a1a18; border-left: 4px solid #534AB7; padding-left: 12px; }
-  h3 { font-size: 1.1rem; font-weight: 700; margin-top: 28px; color: #3C3489; }
-  p { margin: 14px 0; font-size: 1rem; }
-  .subtitle { color: #5F5E5A; font-size: 1rem; margin-top: 4px; margin-bottom: 32px; }
-  .callout { background: #EEEDFE; border-left: 4px solid #534AB7; border-radius: 0 8px 8px 0; padding: 14px 20px; margin: 20px 0; font-size: 0.97rem; }
-  .callout.green { background: #EAF3DE; border-left-color: #3B6D11; }
-  .callout.amber { background: #FAEEDA; border-left-color: #854F0B; }
-  .callout.red { background: #FCEBEB; border-left-color: #A32D2D; }
-  .callout.teal { background: #E1F5EE; border-left-color: #0F6E56; }
-  code { background: #F1EFE8; border-radius: 4px; padding: 2px 7px; font-family: 'Courier New', monospace; font-size: 0.93rem; color: #3C3489; }
-  pre { background: #1a1a18; color: #c2c0b6; border-radius: 10px; padding: 20px 24px; font-family: 'Courier New', monospace; font-size: 0.88rem; line-height: 1.7; overflow-x: auto; margin: 20px 0; }
-  pre .kw { color: #AFA9EC; }
-  pre .cm { color: #5F5E5A; }
-  pre .st { color: #9FE1CB; }
-  pre .nm { color: #FAC775; }
-  pre .fn { color: #5DCAA5; }
-  svg { display: block; margin: 24px auto; }
-  .diagram-caption { text-align: center; color: #5F5E5A; font-size: 0.88rem; margin-top: -12px; margin-bottom: 24px; font-style: italic; }
-  hr { border: none; border-top: 1px solid #D3D1C7; margin: 40px 0; }
-  .part-label { display: inline-block; background: #534AB7; color: #fff; border-radius: 20px; padding: 4px 16px; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 12px; }
-  .file-block { background: #fff; border: 1px solid #D3D1C7; border-radius: 10px; padding: 18px 22px; margin: 16px 0; }
-  .file-name { font-family: 'Courier New', monospace; font-size: 1rem; font-weight: 700; color: #534AB7; margin-bottom: 6px; }
-  .file-role { font-size: 0.88rem; color: #5F5E5A; margin-bottom: 8px; }
-  .file-contains { font-size: 0.93rem; }
-  .tag { display: inline-block; border-radius: 5px; padding: 1px 8px; font-size: 0.78rem; font-weight: 700; margin-right: 4px; }
-  .tag.purple { background: #EEEDFE; color: #534AB7; }
-  .tag.green { background: #EAF3DE; color: #3B6D11; }
-  .tag.amber { background: #FAEEDA; color: #854F0B; }
-  .tag.gray { background: #F1EFE8; color: #444441; }
-  .tag.teal { background: #E1F5EE; color: #0F6E56; }
-  .tag.red { background: #FCEBEB; color: #A32D2D; }
-  ul li { margin: 6px 0; }
-  ol li { margin: 8px 0; }
-  .flow-step { display: flex; gap: 14px; align-items: flex-start; margin: 12px 0; }
-  .flow-num { background: #534AB7; color: #fff; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.88rem; flex-shrink: 0; margin-top: 3px; }
-  .flow-num.green { background: #1D9E75; }
-  .flow-num.amber { background: #BA7517; }
-  table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.93rem; }
-  th { background: #EEEDFE; color: #26215C; padding: 10px 14px; text-align: left; font-weight: 700; }
-  td { padding: 10px 14px; border-bottom: 1px solid #F1EFE8; vertical-align: top; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: #f7f6f3;
+    color: #1a1a18;
+    line-height: 1.85;
+  }
+
+  .topbar {
+    background: #0f0e0c;
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .topbar-brand {
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: #5F5E5A;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .topbar-brand span { color: #AFA9EC; }
+
+  .topbar-nav {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+  }
+
+  .topbar-nav a {
+    font-size: 0.82rem;
+    color: #5F5E5A;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .topbar-nav a:hover { color: #c2c0b6; }
+
+  .page-hero {
+    background: #0f0e0c;
+    border-bottom: 1px solid #2c2c2a;
+    padding: 48px 32px 40px;
+  }
+
+  .page-hero-inner {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .part-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #1a1a18;
+    border: 1px solid #0F6E56;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #5DCAA5;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .part-pill-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #0F6E56;
+  }
+
+  .page-hero h1 {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+
+  .page-hero-sub {
+    font-size: 1rem;
+    color: #888780;
+    max-width: 580px;
+    line-height: 1.7;
+  }
+
+  .content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 52px 32px 80px;
+  }
+
+  .section-block { margin-top: 64px; }
+  .section-block:first-of-type { margin-top: 0; }
+
+  h2 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: #1a1a18;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  h2::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 22px;
+    background: #0F6E56;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  h3 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    margin-top: 28px;
+    margin-bottom: 10px;
+    color: #3C3489;
+  }
+
+  p {
+    font-size: 1rem;
+    margin-bottom: 16px;
+    color: #1a1a18;
+  }
+
+  .section-intro {
+    font-size: 1.02rem;
+    color: #5F5E5A;
+    margin-bottom: 16px;
+    line-height: 1.75;
+  }
+
+  .callout {
+    border-radius: 0 10px 10px 0;
+    padding: 16px 22px;
+    margin: 24px 0;
+    font-size: 0.96rem;
+    line-height: 1.7;
+    border-left: 4px solid;
+  }
+
+  .callout-purple { background: #EEEDFE; border-color: #534AB7; color: #26215C; }
+  .callout-green  { background: #EAF3DE; border-color: #3B6D11; color: #173404; }
+  .callout-amber  { background: #FAEEDA; border-color: #854F0B; color: #412402; }
+  .callout-teal   { background: #E1F5EE; border-color: #0F6E56; color: #04342C; }
+  .callout strong { font-weight: 700; }
+
+  code {
+    background: #EEEDFE;
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+    color: #3C3489;
+  }
+
+  .code-block {
+    background: #0f0e0c;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 0.88rem;
+    line-height: 1.8;
+    color: #c2c0b6;
+    overflow-x: auto;
+  }
+
+  svg { display: block; margin: 28px auto; }
+
+  .caption {
+    text-align: center;
+    font-size: 0.86rem;
+    color: #888780;
+    font-style: italic;
+    margin-top: -14px;
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid #E8E6DF;
+    margin: 56px 0 0;
+  }
+
+  ul { padding-left: 22px; margin-bottom: 16px; }
+  ul li { margin-bottom: 8px; font-size: 1rem; }
+
+  .file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 24px 0;
+  }
+
+  .file-card {
+    background: #fff;
+    border: 1px solid #E8E6DF;
+    border-radius: 10px;
+    padding: 18px 22px;
+    border-left: 3px solid #534AB7;
+  }
+
+  .file-card.green  { border-left-color: #1D9E75; }
+  .file-card.amber  { border-left-color: #BA7517; }
+  .file-card.teal   { border-left-color: #0F6E56; }
+  .file-card.red    { border-left-color: #A32D2D; }
+
+  .file-name {
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #534AB7;
+    margin-bottom: 4px;
+  }
+
+  .file-card.green .file-name  { color: #1D9E75; }
+  .file-card.amber .file-name  { color: #BA7517; }
+  .file-card.teal  .file-name  { color: #0F6E56; }
+  .file-card.red   .file-name  { color: #A32D2D; }
+
+  .file-role {
+    font-size: 0.84rem;
+    color: #888780;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+  }
+
+  .file-body {
+    font-size: 0.94rem;
+    color: #1a1a18;
+    line-height: 1.7;
+  }
+
+  .tag {
+    display: inline-block;
+    border-radius: 5px;
+    padding: 1px 8px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    margin-right: 4px;
+    margin-bottom: 2px;
+  }
+
+  .tag-purple { background: #EEEDFE; color: #534AB7; }
+  .tag-amber  { background: #FAEEDA; color: #854F0B; }
+  .tag-gray   { background: #F1EFE8; color: #444441; }
+
+  .flow-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 20px 0;
+  }
+
+  .flow-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid #E8E6DF;
+    border-radius: 8px;
+    font-size: 0.96rem;
+    line-height: 1.65;
+  }
+
+  .flow-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .fn-purple { background: #534AB7; }
+  .fn-green  { background: #1D9E75; }
+  .fn-amber  { background: #BA7517; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 0.92rem;
+  }
+
+  th {
+    background: #0f0e0c;
+    color: #c2c0b6;
+    padding: 11px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  td {
+    padding: 11px 16px;
+    border-bottom: 1px solid #F1EFE8;
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
   tr:last-child td { border-bottom: none; }
+  tr:nth-child(even) td { background: #fdfcfa; }
+
+  .qa-table th:first-child { width: 36%; }
+
+  .nav-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 64px;
+    padding-top: 28px;
+    border-top: 1px solid #E8E6DF;
+  }
+
+  .nav-footer a {
+    font-size: 0.9rem;
+    color: #534AB7;
+    text-decoration: none;
+    font-weight: 700;
+    transition: color 0.15s;
+  }
+
+  .nav-footer a:hover { color: #3C3489; }
+
+  .final-note {
+    background: #0f0e0c;
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-top: 48px;
+  }
+
+  .final-note p {
+    color: #c2c0b6;
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 0;
+  }
+
+  .final-note strong { color: #5DCAA5; }
 </style>
 </head>
 <body>
 
-<div class="part-label">PART 5 OF 5</div>
-<h1>Project Structure and Full Code Walkthrough</h1>
-<p class="subtitle">How the files are organized, how they connect to each other, how data flows through the system, and what every part of the code does.</p>
-
-<hr>
-
-<h2>1. Header Files vs Source Files</h2>
-
-<p>In C++ projects you almost always see pairs of files: a <code>.h</code> file and a <code>.cpp</code> file. Understanding why they exist as a pair is important before reading the project.</p>
-
-<h3>The .h file: the declaration</h3>
-<p>A header file declares what exists. It says: there is a class called Stack, it has a method called push, push takes these parameters and returns this type. It is a promise. A contract. It does not contain the actual logic of how push works, only that push exists and what its signature looks like.</p>
-
-<h3>The .cpp file: the definition</h3>
-<p>A source file defines what was declared. It contains the actual implementation. The real code. How push works step by step.</p>
-
-<h3>Why this separation exists</h3>
-<p>When file A needs to use something from file B, file A includes B's header. This gives A the declarations it needs to compile. A does not need to see B's full implementation to use it. It just needs to know the shape of what it is calling.</p>
-
-<p>This means large projects can compile faster, files stay focused, and changes to an implementation do not force everything that uses it to recompile from scratch.</p>
-
-<div class="callout amber">
-  In SENTINEL we kept all logic inside header files only. No separate .cpp files. This is called header only design and it is a valid approach especially for smaller projects and template heavy code. It trades some compilation efficiency for simplicity. For a project of this size it is perfectly fine.
+<div class="topbar">
+  <a class="topbar-brand" href="index.html"><span>SENTINEL</span> — Study Notes</a>
+  <nav class="topbar-nav">
+    <a href="index.html">Index</a>
+    <a href="part4_sentinel_context.html">← Part 4</a>
+  </nav>
 </div>
 
-<h3>The include guard</h3>
-<p>Every header file starts with <code>#pragma once</code>. This tells the compiler: if you have already included this file once, do not include it again. Without this, if two files both include Stack.h, the Stack definition would appear twice and cause errors.</p>
+<div class="page-hero">
+  <div class="page-hero-inner">
+    <div class="part-pill"><div class="part-pill-dot"></div>Part 5 of 5</div>
+    <h1>Project Structure and Full Code Walkthrough</h1>
+    <p class="page-hero-sub">How the files are organized, what each one does, how they connect through includes, how data flows from CSV into every structure, and the reasoning behind every design decision.</p>
+  </div>
+</div>
 
-<hr>
+<div class="content">
 
-<h2>2. Project File Structure</h2>
+  <h2>Header Files vs Source Files</h2>
+
+  <p class="section-intro">In C++ you almost always see files in pairs: a <code>.h</code> file and a <code>.cpp</code> file. Understanding why that split exists matters before reading any C++ project.</p>
+
+  <h3>The .h file is a declaration</h3>
+  <p>A header file declares what exists. It says: there is a class called Stack, it has a method called push, push takes these parameters and returns this type. It is a contract. It does not contain how push works, only that it exists and what calling it looks like.</p>
+
+  <h3>The .cpp file is the definition</h3>
+  <p>A source file defines what was declared in the header. It contains the actual implementation. The real logic. How push works step by step.</p>
+
+  <h3>Why this separation exists</h3>
+  <p>When file A needs to use something from file B, file A includes B's header. That gives A everything it needs to compile. A does not need to see B's implementation. It just needs to know the shape of what it is calling. This keeps files focused and lets large projects compile efficiently.</p>
+
+  <div class="callout callout-amber">
+    <strong>SENTINEL uses header-only design.</strong> All logic lives inside <code>.h</code> files with no separate <code>.cpp</code> files. This is a valid approach for projects of this size. It trades some compile efficiency for simplicity, and since everything compiles from a single <code>main.cpp</code> include chain, it works cleanly.
+  </div>
+
+  <h3>The include guard</h3>
+  <p>Every header file starts with <code>#pragma once</code>. This tells the compiler: if you have already seen this file, skip it. Without it, including the same header from two places would define the same class twice and cause a compile error.</p>
+
+  <hr class="divider">
+
+  <div class="section-block">
+    <h2>Project File Structure</h2>
 
 <svg width="100%" viewBox="0 0 680 440" role="img">
-  <title>SENTINEL project folder structure</title>
-  <desc>A tree diagram showing all files in the project folder organized hierarchically</desc>
+  <title>SENTINEL project folder tree</title>
+  <desc>All project files shown as a hierarchical tree from the project root</desc>
   <defs><marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
-
   <rect x="40" y="20" width="120" height="36" rx="6" fill="#534AB7" stroke="#3C3489" stroke-width="1"/>
   <text x="100" y="43" text-anchor="middle" font-family="Courier New" font-size="13" fill="#fff" font-weight="700">project/</text>
-
   <line x1="100" y1="56" x2="100" y2="80" stroke="#B4B2A9" stroke-width="1"/>
   <line x1="100" y1="80" x2="160" y2="80" stroke="#B4B2A9" stroke-width="1"/>
   <line x1="100" y1="80" x2="100" y2="420" stroke="#B4B2A9" stroke-width="1"/>
-
   <rect x="162" y="64" width="80" height="30" rx="5" fill="#1D9E75" stroke="#0F6E56" stroke-width="1"/>
   <text x="202" y="83" text-anchor="middle" font-family="Courier New" font-size="12" fill="#fff">data/</text>
-
   <line x1="202" y1="94" x2="202" y2="110" stroke="#B4B2A9" stroke-width="1"/>
   <line x1="202" y1="110" x2="250" y2="110" stroke="#B4B2A9" stroke-width="1"/>
   <line x1="202" y1="110" x2="202" y2="148" stroke="#B4B2A9" stroke-width="1"/>
   <rect x="252" y="98" width="130" height="26" rx="4" fill="#E1F5EE" stroke="#1D9E75" stroke-width="0.5"/>
   <text x="317" y="115" text-anchor="middle" font-family="Courier New" font-size="11" fill="#085041">patients.csv</text>
-
   <line x1="202" y1="148" x2="250" y2="148" stroke="#B4B2A9" stroke-width="1"/>
   <rect x="252" y="136" width="130" height="26" rx="4" fill="#E1F5EE" stroke="#1D9E75" stroke-width="0.5"/>
   <text x="317" y="153" text-anchor="middle" font-family="Courier New" font-size="11" fill="#085041">contacts.csv</text>
-
   <line x1="100" y1="180" x2="160" y2="180" stroke="#B4B2A9" stroke-width="1"/>
   <rect x="162" y="166" width="100" height="28" rx="5" fill="#A32D2D" stroke="#791F1F" stroke-width="1"/>
   <text x="212" y="184" text-anchor="middle" font-family="Courier New" font-size="12" fill="#fff">main.cpp</text>
-
   <line x1="100" y1="220" x2="160" y2="220" stroke="#B4B2A9" stroke-width="1"/>
   <rect x="162" y="208" width="90" height="26" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="207" y="225" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">Stack.h</text>
-
   <line x1="100" y1="254" x2="160" y2="254" stroke="#B4B2A9" stroke-width="1"/>
   <rect x="162" y="242" width="90" height="26" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="207" y="259" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">Case.h</text>
-
   <line x1="100" y1="288" x2="160" y2="288" stroke="#B4B2A9" stroke-width="1"/>
   <rect x="162" y="276" width="90" height="26" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="207" y="293" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">Queue.h</text>
-
   <line x1="100" y1="322" x2="160" y2="322" stroke="#B4B2A9" stroke-width="1"/>
   <rect x="162" y="310" width="90" height="26" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="207" y="327" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">Heap.h</text>
-
   <line x1="100" y1="356" x2="160" y2="356" stroke="#B4B2A9" stroke-width="1"/>
   <rect x="162" y="344" width="100" height="26" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="212" y="361" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">AVLTree.h</text>
-
   <line x1="100" y1="390" x2="160" y2="390" stroke="#B4B2A9" stroke-width="1"/>
   <rect x="162" y="378" width="100" height="26" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="212" y="395" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">HashMap.h</text>
-
   <line x1="100" y1="420" x2="160" y2="420" stroke="#B4B2A9" stroke-width="1"/>
   <rect x="162" y="408" width="90" height="26" rx="4" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="207" y="425" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">Graph.h</text>
-
   <rect x="400" y="208" width="100" height="26" rx="4" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
   <text x="450" y="225" text-anchor="middle" font-family="Courier New" font-size="11" fill="#412402">Dijkstra.h</text>
-
   <rect x="400" y="242" width="90" height="26" rx="4" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
   <text x="445" y="259" text-anchor="middle" font-family="Courier New" font-size="11" fill="#412402">Prims.h</text>
-
   <rect x="400" y="276" width="120" height="26" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
   <text x="460" y="293" text-anchor="middle" font-family="Courier New" font-size="11" fill="#04342C">DataLoader.h</text>
-
   <text x="420" y="188" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">also in project/</text>
 </svg>
-<p class="diagram-caption">Complete project layout. Two CSV files in data folder. One main entry point. Ten header files each responsible for one thing.</p>
-
-<hr>
-
-<h2>3. What Each File Does</h2>
-
-<div class="file-block">
-  <div class="file-name">Stack.h</div>
-  <div class="file-role">Defines the StackNode struct and the Stack class</div>
-  <div class="file-contains">
-    <span class="tag purple">StackNode</span> holds timestamp, day number, event string, officer note, and a next pointer.<br>
-    <span class="tag purple">Stack</span> has push, pop, peek, isEmpty, getSize, and display methods.<br>
-    This file has no dependencies. It includes nothing except string and iostream. It is the foundation everything else builds on.
+<p class="caption">Two CSVs in data/, one entry point, ten header files. Each file owns one responsibility.</p>
   </div>
-</div>
 
-<div class="file-block">
-  <div class="file-name">Case.h</div>
-  <div class="file-role">Defines the Case struct: the central data object of the entire system</div>
-  <div class="file-contains">
-    <span class="tag purple">Case</span> holds patient ID, name, age, area code, day registered, all seven symptom booleans, status string, risk score integer, a Stack object for investigation log, and a next pointer for queue chaining.<br>
-    The <code>calculateRiskScore()</code> method lives here. It reads the seven booleans and returns the total score.<br>
-    <span class="tag amber">Depends on:</span> Stack.h
+  <hr class="divider">
+
+  <div class="section-block">
+    <h2>What Each File Does</h2>
+
+    <div class="file-list">
+
+      <div class="file-card">
+        <div class="file-name">Stack.h</div>
+        <div class="file-role">Per-patient investigation log</div>
+        <div class="file-body">
+          <span class="tag tag-purple">StackNode</span> holds timestamp, day number, event string, officer note, and a next pointer.<br>
+          <span class="tag tag-purple">Stack</span> implements push, pop, peek, isEmpty, getSize, and display.<br>
+          No dependencies. Includes only string and iostream. The bottom of the entire dependency chain.
+        </div>
+      </div>
+
+      <div class="file-card">
+        <div class="file-name">Case.h</div>
+        <div class="file-role">The central data object of the system</div>
+        <div class="file-body">
+          <span class="tag tag-purple">Case</span> holds patient ID, name, age, area code, day registered, seven symptom booleans, status string, risk score integer, a Stack for the investigation log, and a next pointer for queue chaining.<br>
+          <code>calculateRiskScore()</code> lives here and runs automatically in the constructor.<br>
+          <span class="tag tag-amber">Depends on:</span> Stack.h
+        </div>
+      </div>
+
+      <div class="file-card">
+        <div class="file-name">Queue.h</div>
+        <div class="file-role">Master case pipeline</div>
+        <div class="file-body">
+          <span class="tag tag-purple">Queue</span> holds front and rear pointers and a size counter.<br>
+          Methods: enqueue, dequeue, getFront, isEmpty, findById, displayAll, displayByDay, displayByArea.<br>
+          <code>displayByDay</code> and <code>displayByArea</code> traverse the queue and filter inline, producing snapshots without a separate data structure.<br>
+          <span class="tag tag-amber">Depends on:</span> Case.h
+        </div>
+      </div>
+
+      <div class="file-card">
+        <div class="file-name">Heap.h</div>
+        <div class="file-role">Risk priority engine</div>
+        <div class="file-body">
+          <span class="tag tag-purple">HeapNode</span> holds patient ID, risk score, and next pointer.<br>
+          <span class="tag tag-purple">Heap</span> maintains a linked list in descending order of risk score. Head is always the highest risk patient.<br>
+          Methods: insert, extractMax, peekMax, isEmpty, display, updateScore.<br>
+          <code>updateScore</code> removes the old entry and reinserts at the correct position, keeping the sort intact.<br>
+          <span class="tag tag-amber">Depends on:</span> Case.h
+        </div>
+      </div>
+
+      <div class="file-card green">
+        <div class="file-name">AVLTree.h</div>
+        <div class="file-role">Date-indexed self-balancing search tree</div>
+        <div class="file-body">
+          <span class="tag tag-purple">AVLNode</span> holds patient ID, day integer, height, left pointer, right pointer.<br>
+          <span class="tag tag-purple">AVLTree</span> implements rotateLeft, rotateRight, balance factor calculation, and the balance dispatcher.<br>
+          Public methods: insert, searchRange, displayAll.<br>
+          <code>searchRange(d1, d2)</code> uses inorder traversal with branch pruning: subtrees entirely outside the range are skipped without visiting.<br>
+          <span class="tag tag-gray">No dependencies</span> beyond string and iostream.
+        </div>
+      </div>
+
+      <div class="file-card">
+        <div class="file-name">HashMap.h</div>
+        <div class="file-role">Dual lookup: person profiles and location index</div>
+        <div class="file-body">
+          <span class="tag tag-purple">PersonEntry</span> holds key string, Case pointer, and next pointer for collision chaining.<br>
+          <span class="tag tag-purple">LocationEntry</span> holds area code string, array of patient IDs, count, and next pointer.<br>
+          <span class="tag tag-purple">HashMap</span> contains personTable and locationTable, each 101 slots wide.<br>
+          Hash function: polynomial rolling hash multiplying by 31 per character, then modulo 101.<br>
+          Methods: insertPerson, getPerson, insertLocation, displayLocation, displayAllLocations.<br>
+          <span class="tag tag-amber">Depends on:</span> Case.h
+        </div>
+      </div>
+
+      <div class="file-card green">
+        <div class="file-name">Graph.h</div>
+        <div class="file-role">Weighted contact network — foundation of all analysis</div>
+        <div class="file-body">
+          <span class="tag tag-purple">AdjNode</span> holds neighbor ID, risk weight, contact day, location type, and next pointer.<br>
+          <span class="tag tag-purple">GraphNode</span> holds patient ID and head of its adjacency list.<br>
+          <span class="tag tag-purple">Graph</span> contains an array of GraphNodes plus a parallel ID string array. getIndex maps ID to index via linear search.<br>
+          <code>bfsWaveSimulation</code> uses an internal integer-indexed queue to perform BFS and prints each wave level.<br>
+          <span class="tag tag-gray">No dependencies</span> beyond string and iostream.
+        </div>
+      </div>
+
+      <div class="file-card amber">
+        <div class="file-name">Dijkstra.h</div>
+        <div class="file-role">Shortest transmission path tracer</div>
+        <div class="file-body">
+          One public method: <code>findPath(graph, srcId, destId)</code>.<br>
+          Uses integer arrays for dist, visited, and parent. No dynamic allocation inside the algorithm.<br>
+          Edge weight inversion: distance added is (10 minus risk weight), so high-risk contacts appear as short distances. Dijkstra then finds the highest-probability chain naturally.<br>
+          Path reconstructed by following parent array backwards from destination, then printed in reverse.<br>
+          <span class="tag tag-amber">Depends on:</span> Graph.h
+        </div>
+      </div>
+
+      <div class="file-card amber">
+        <div class="file-name">Prims.h</div>
+        <div class="file-role">Minimum containment network</div>
+        <div class="file-body">
+          One public method: <code>findMinContainmentNetwork(graph)</code>.<br>
+          Integer arrays for inMST flags, key values, and parent IDs.<br>
+          At each step finds the unvisited node with the smallest key, adds it to the MST, then relaxes its edges.<br>
+          Prints each selected contact link as a quarantine target, with its risk weight, plus the total network risk score.<br>
+          <span class="tag tag-amber">Depends on:</span> Graph.h
+        </div>
+      </div>
+
+      <div class="file-card teal">
+        <div class="file-name">DataLoader.h</div>
+        <div class="file-role">CSV reader — populates all structures simultaneously</div>
+        <div class="file-body">
+          Two methods: <code>loadPatients</code> and <code>loadContacts</code>.<br>
+          <code>loadPatients</code> opens patients.csv, skips the header, reads each row, creates a Case, pushes an initial stack event, then inserts into Queue, Heap, AVL Tree, both HashMaps, and Graph in sequence.<br>
+          <code>loadContacts</code> opens contacts.csv and calls addEdge for each row.<br>
+          <span class="tag tag-amber">Depends on:</span> Queue.h, Heap.h, AVLTree.h, HashMap.h, Graph.h
+        </div>
+      </div>
+
+      <div class="file-card red">
+        <div class="file-name">main.cpp</div>
+        <div class="file-role">Entry point, global state, menu loop</div>
+        <div class="file-body">
+          Declares all seven structures as global objects accessible from every function.<br>
+          On startup: prints the SENTINEL header, calls DataLoader to populate from CSV.<br>
+          Runs a do-while loop with a 16-option menu. A switch statement routes each choice to the correct method on the correct structure.<br>
+          <span class="tag tag-amber">Depends on:</span> all header files.
+        </div>
+      </div>
+
+    </div>
   </div>
-</div>
 
-<div class="file-block">
-  <div class="file-name">Queue.h</div>
-  <div class="file-role">Defines the master case pipeline</div>
-  <div class="file-contains">
-    <span class="tag purple">Queue</span> holds front and rear pointers and a size counter.<br>
-    Methods: enqueue, dequeue, getFront, isEmpty, getSize, findById, displayAll, displayByDay, displayByArea.<br>
-    <code>displayByDay</code> traverses the queue and prints only cases matching a given day integer.<br>
-    <code>displayByArea</code> traverses and filters by area code string.<br>
-    <span class="tag amber">Depends on:</span> Case.h
-  </div>
-</div>
+  <hr class="divider">
 
-<div class="file-block">
-  <div class="file-name">Heap.h</div>
-  <div class="file-role">Defines the risk priority engine as a sorted linked list</div>
-  <div class="file-contains">
-    <span class="tag purple">HeapNode</span> holds patient ID string, risk score integer, and next pointer.<br>
-    <span class="tag purple">Heap</span> maintains a linked list sorted in descending order of risk score. Head is always highest risk.<br>
-    Methods: insert, extractMax, peekMax, isEmpty, getSize, display, updateScore.<br>
-    <code>updateScore</code> removes the old entry and reinserts with the new score, maintaining sort order.<br>
-    <span class="tag amber">Depends on:</span> Case.h
-  </div>
-</div>
-
-<div class="file-block">
-  <div class="file-name">AVLTree.h</div>
-  <div class="file-role">Self-balancing binary search tree indexed by outbreak day</div>
-  <div class="file-contains">
-    <span class="tag purple">AVLNode</span> holds patient ID, day integer, height integer, left pointer, right pointer.<br>
-    <span class="tag purple">AVLTree</span> contains all rotation logic (rotateLeft, rotateRight), balance factor calculation, and the balance method that decides which rotation to apply.<br>
-    Public methods: insert, searchRange, displayAll.<br>
-    <code>searchRange(d1, d2)</code> performs an inorder traversal that prunes branches outside the range. Fast and precise.<br>
-    <span class="tag gray">No dependencies</span> beyond string and iostream.
-  </div>
-</div>
-
-<div class="file-block">
-  <div class="file-name">HashMap.h</div>
-  <div class="file-role">Dual hashmap: person profiles and location index</div>
-  <div class="file-contains">
-    <span class="tag purple">PersonEntry</span> holds a key string, a Case pointer, and a next pointer for chaining.<br>
-    <span class="tag purple">LocationEntry</span> holds an area code string, an array of patient ID strings, a count, and a next pointer.<br>
-    <span class="tag purple">HashMap</span> contains two separate tables: personTable and locationTable, each of size 101 slots.<br>
-    The hash function uses a polynomial rolling hash: multiplies running total by 31 and adds each character's ASCII value, then takes modulo 101.<br>
-    Methods: insertPerson, getPerson, insertLocation, displayLocation, displayAllLocations.<br>
-    <span class="tag amber">Depends on:</span> Case.h
-  </div>
-</div>
-
-<div class="file-block">
-  <div class="file-name">Graph.h</div>
-  <div class="file-role">Contact network: the skeleton of the entire system</div>
-  <div class="file-contains">
-    <span class="tag purple">AdjNode</span> holds neighbor patient ID, risk weight, day of contact, location type string, and next pointer.<br>
-    <span class="tag purple">GraphNode</span> holds the patient ID and the head of its adjacency linked list.<br>
-    <span class="tag purple">Graph</span> contains an array of GraphNode objects and a parallel array of node ID strings. getIndex performs linear search to map ID to array index.<br>
-    Methods: addNode, addEdge, displayGraph, getNeighbors, getWeight, getNodeCount, getNodeId, nodeExists, bfsWaveSimulation.<br>
-    <code>bfsWaveSimulation</code> uses an internal array based queue with a front and rear integer to perform BFS and prints each wave level.<br>
-    <span class="tag gray">No dependencies</span> beyond string and iostream.
-  </div>
-</div>
-
-<div class="file-block">
-  <div class="file-name">Dijkstra.h</div>
-  <div class="file-role">Shortest transmission path between two patients</div>
-  <div class="file-contains">
-    <span class="tag purple">Dijkstra</span> class with one public method: findPath(graph, srcId, destId).<br>
-    Uses integer arrays for dist, visited, and parent tracking. No dynamic allocation inside the algorithm itself.<br>
-    Edge weight is inverted: distance added is (10 minus risk weight) so high risk contacts become short distances and Dijkstra naturally finds the highest risk path.<br>
-    Path is reconstructed by following the parent array backwards from destination to source, then printed in reverse.<br>
-    <span class="tag amber">Depends on:</span> Graph.h
-  </div>
-</div>
-
-<div class="file-block">
-  <div class="file-name">Prims.h</div>
-  <div class="file-role">Minimum containment network across all connected cases</div>
-  <div class="file-contains">
-    <span class="tag purple">Prims</span> class with one public method: findMinContainmentNetwork(graph).<br>
-    Uses integer arrays for inMST flags, key values, and parent tracking.<br>
-    At each iteration finds the node with the smallest key value not yet in the MST, adds it, then relaxes all its edges.<br>
-    Prints each selected edge as a contact link to break, with its risk weight, and the total network risk score.<br>
-    <span class="tag amber">Depends on:</span> Graph.h
-  </div>
-</div>
-
-<div class="file-block">
-  <div class="file-name">DataLoader.h</div>
-  <div class="file-role">Reads CSV files and populates all structures simultaneously</div>
-  <div class="file-contains">
-    <span class="tag purple">DataLoader</span> class with two methods: loadPatients and loadContacts.<br>
-    <code>loadPatients</code> opens patients.csv, skips the header line, reads each row, splits by comma, creates a Case object, pushes an initial stack event, then inserts into Queue, Heap, AVL Tree, person HashMap, location HashMap, and Graph.<br>
-    <code>loadContacts</code> opens contacts.csv, reads each row, and calls addEdge on the Graph with the two patient IDs and risk weight.<br>
-    <span class="tag amber">Depends on:</span> Queue.h, Heap.h, AVLTree.h, HashMap.h, Graph.h
-  </div>
-</div>
-
-<div class="file-block">
-  <div class="file-name">main.cpp</div>
-  <div class="file-role">Entry point, global state, menu system</div>
-  <div class="file-contains">
-    Declares all seven data structures as global objects so every function can access them without passing parameters everywhere.<br>
-    On startup: prints the SENTINEL header, calls DataLoader to populate all structures from CSV.<br>
-    Runs a do-while loop displaying a 16 option menu. Each option calls the relevant method on the relevant structure.<br>
-    Handles new patient registration, status updates, event logging, all display operations, and all algorithmic operations.<br>
-    <span class="tag amber">Depends on:</span> All header files.
-  </div>
-</div>
-
-<hr>
-
-<h2>4. How the Files Connect</h2>
+  <div class="section-block">
+    <h2>How the Files Connect</h2>
 
 <svg width="100%" viewBox="0 0 680 320" role="img">
-  <title>File dependency diagram showing which files include which</title>
-  <desc>A directed graph showing include dependencies between all project files with main.cpp at top</desc>
+  <title>File dependency graph</title>
+  <desc>Directed graph showing which files include which, with main.cpp at the top and Stack.h at the bottom</desc>
   <defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
-
   <rect x="270" y="16" width="140" height="34" rx="6" fill="#A32D2D" stroke="#791F1F" stroke-width="1"/>
   <text x="340" y="38" text-anchor="middle" font-family="Courier New" font-size="13" fill="#fff" font-weight="700">main.cpp</text>
-
   <line x1="290" y1="50" x2="170" y2="88" stroke="#888780" stroke-width="1" marker-end="url(#a2)"/>
   <line x1="320" y1="50" x2="280" y2="88" stroke="#888780" stroke-width="1" marker-end="url(#a2)"/>
   <line x1="340" y1="50" x2="340" y2="88" stroke="#888780" stroke-width="1" marker-end="url(#a2)"/>
   <line x1="360" y1="50" x2="410" y2="88" stroke="#888780" stroke-width="1" marker-end="url(#a2)"/>
   <line x1="390" y1="50" x2="520" y2="88" stroke="#888780" stroke-width="1" marker-end="url(#a2)"/>
-
   <rect x="90" y="90" width="110" height="30" rx="5" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="145" y="110" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">DataLoader.h</text>
-
   <rect x="220" y="90" width="90" height="30" rx="5" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="265" y="110" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">Dijkstra.h</text>
-
   <rect x="320" y="90" width="70" height="30" rx="5" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="355" y="110" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">Prims.h</text>
-
   <rect x="400" y="90" width="80" height="30" rx="5" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="440" y="110" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">Queue.h</text>
-
   <rect x="490" y="90" width="80" height="30" rx="5" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="530" y="110" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">Heap.h</text>
-
   <line x1="145" y1="120" x2="260" y2="170" stroke="#B4B2A9" stroke-width="0.8" marker-end="url(#a2)"/>
   <line x1="145" y1="120" x2="380" y2="170" stroke="#B4B2A9" stroke-width="0.8" marker-end="url(#a2)"/>
   <line x1="145" y1="120" x2="480" y2="170" stroke="#B4B2A9" stroke-width="0.8" marker-end="url(#a2)"/>
@@ -327,150 +637,175 @@
   <line x1="355" y1="120" x2="330" y2="170" stroke="#B4B2A9" stroke-width="0.8" marker-end="url(#a2)"/>
   <line x1="440" y1="120" x2="400" y2="170" stroke="#B4B2A9" stroke-width="0.8" marker-end="url(#a2)"/>
   <line x1="530" y1="120" x2="420" y2="170" stroke="#B4B2A9" stroke-width="0.8" marker-end="url(#a2)"/>
-
   <rect x="230" y="172" width="80" height="30" rx="5" fill="#5DCAA5" stroke="#1D9E75" stroke-width="0.5"/>
   <text x="270" y="192" text-anchor="middle" font-family="Courier New" font-size="11" fill="#04342C">Graph.h</text>
-
   <rect x="320" y="172" width="80" height="30" rx="5" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="360" y="192" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">Case.h</text>
-
   <rect x="410" y="172" width="90" height="30" rx="5" fill="#5DCAA5" stroke="#1D9E75" stroke-width="0.5"/>
   <text x="455" y="192" text-anchor="middle" font-family="Courier New" font-size="11" fill="#04342C">AVLTree.h</text>
-
   <rect x="510" y="172" width="100" height="30" rx="5" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
   <text x="560" y="192" text-anchor="middle" font-family="Courier New" font-size="11" fill="#26215C">HashMap.h</text>
-
   <line x1="360" y1="202" x2="280" y2="248" stroke="#B4B2A9" stroke-width="0.8" marker-end="url(#a2)"/>
-
   <rect x="230" y="250" width="80" height="30" rx="5" fill="#FCEBEB" stroke="#A32D2D" stroke-width="0.5"/>
   <text x="270" y="270" text-anchor="middle" font-family="Courier New" font-size="11" fill="#501313">Stack.h</text>
-
-  <text x="340" y="308" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">arrows mean "includes". Stack.h is at the bottom because nothing depends on it except Case.h.</text>
+  <text x="340" y="306" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">arrows mean "includes". Stack.h has no dependencies. main.cpp depends on everything.</text>
 </svg>
-<p class="diagram-caption">Dependency chain. main.cpp includes everything. DataLoader includes everything except Dijkstra and Prims. Stack.h has no dependencies at all.</p>
+<p class="caption">The dependency chain flows top to bottom. Stack.h is at the bottom because nothing depends on it except Case.h. main.cpp is at the top because it depends on everything.</p>
+  </div>
 
-<hr>
+  <hr class="divider">
 
-<h2>5. How Data Flows: From CSV to All Structures</h2>
+  <div class="section-block">
+    <h2>How Data Flows: CSV to All Structures</h2>
 
-<p>When the program starts, <code>main</code> calls DataLoader. Here is the exact sequence of what happens for each line in patients.csv:</p>
+    <p class="section-intro">When the program starts, <code>main</code> calls DataLoader. Here is the exact sequence for each line in patients.csv:</p>
 
-<div class="flow-step">
-  <div class="flow-num">1</div>
-  <div>CSV line is read as a string. It is split by comma into 13 fields: ID, name, age, area, day, seven boolean columns, status.</div>
+    <div class="flow-list">
+      <div class="flow-item">
+        <div class="flow-num fn-purple">1</div>
+        <div>CSV line read as string. Split by comma into 13 fields: ID, name, age, area, day, seven symptom booleans, status.</div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-num fn-purple">2</div>
+        <div>New Case object created with <code>new Case(...)</code>. All fields set. <code>calculateRiskScore()</code> runs automatically in the constructor.</div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-num fn-purple">3</div>
+        <div>Initial event pushed to this case's personal Stack: day of registration, event description, intake note.</div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-num fn-green">4</div>
+        <div><code>caseQueue.enqueue(c)</code> — case joins the master queue at the rear in arrival order.</div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-num fn-green">5</div>
+        <div><code>riskHeap.insert(id, score)</code> — patient ID and risk score enter the heap, sorted to correct position.</div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-num fn-green">6</div>
+        <div><code>patientTree.insert(id, day)</code> — patient enters the AVL tree indexed by day. Tree rebalances if needed.</div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-num fn-green">7</div>
+        <div><code>patientMap.insertPerson(id, c)</code> — patient ID maps to case pointer in the person hashmap.</div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-num fn-green">8</div>
+        <div><code>patientMap.insertLocation(area, id)</code> — patient ID added to their area code's list in the location hashmap.</div>
+      </div>
+      <div class="flow-item">
+        <div class="flow-num fn-amber">9</div>
+        <div><code>contactGraph.addNode(id)</code> — a graph node is created for this patient.</div>
+      </div>
+    </div>
+
+    <p>After all patients load, contacts.csv runs. Each line calls <code>addEdge</code> with two patient IDs and a risk weight, building all connections in the graph.</p>
+
+    <div class="callout callout-green">
+      <strong>One patient, nine operations, all seven structures updated.</strong> After DataLoader finishes, the system is fully populated and every menu option works immediately.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-block">
+    <h2>The Menu System</h2>
+
+    <p>The menu runs inside a <code>do-while</code> loop. A switch statement routes each integer choice to the correct method on the correct structure.</p>
+
+    <table>
+      <tr><th>Option</th><th>Calls</th><th>Structure</th></tr>
+      <tr><td>1. View all patients</td><td>caseQueue.displayAll()</td><td>Queue traversal</td></tr>
+      <tr><td>2. Search by ID</td><td>patientMap.getPerson(id)</td><td>HashMap lookup</td></tr>
+      <tr><td>3. Add new patient</td><td>All nine insert operations</td><td>All structures</td></tr>
+      <tr><td>4. Update status</td><td>Field update + heap updateScore</td><td>HashMap + Heap</td></tr>
+      <tr><td>5. View case log</td><td>case->investigation_log.display()</td><td>Stack traversal</td></tr>
+      <tr><td>6. Add case event</td><td>case->investigation_log.push(...)</td><td>Stack push</td></tr>
+      <tr><td>7. Patients by day</td><td>caseQueue.displayByDay(day)</td><td>Queue filter</td></tr>
+      <tr><td>8. Patients by area</td><td>caseQueue.displayByArea(area)</td><td>Queue filter</td></tr>
+      <tr><td>9. Day range search</td><td>patientTree.searchRange(d1, d2)</td><td>AVL Tree</td></tr>
+      <tr><td>10. High risk patients</td><td>riskHeap.display()</td><td>Heap traversal</td></tr>
+      <tr><td>11. Area distribution</td><td>patientMap.displayAllLocations()</td><td>Location HashMap</td></tr>
+      <tr><td>12. Contact network</td><td>contactGraph.displayGraph()</td><td>Graph traversal</td></tr>
+      <tr><td>13. Outbreak simulation</td><td>contactGraph.bfsWaveSimulation(id)</td><td>Graph + BFS Queue</td></tr>
+      <tr><td>14. Trace transmission</td><td>dijkstra.findPath(graph, src, dest)</td><td>Graph + Dijkstra</td></tr>
+      <tr><td>15. Containment network</td><td>prims.findMinContainmentNetwork(graph)</td><td>Graph + Prim's</td></tr>
+      <tr><td>16. Sorted timeline</td><td>patientTree.displayAll()</td><td>AVL inorder</td></tr>
+    </table>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-block">
+    <h2>Compiling and Running</h2>
+
+    <p>Open a terminal, navigate to the project folder, and run:</p>
+
+    <div class="code-block">cd project<br>g++ main.cpp -o sentinel<br>./sentinel</div>
+
+    <p>The compiler reads <code>main.cpp</code>. Because main.cpp includes all header files, the compiler sees the entire codebase in one pass. The output binary is named <code>sentinel</code>.</p>
+
+    <div class="callout callout-amber">
+      <strong>CSV path error:</strong> If the program says it cannot find patients.csv, make sure you are running from inside the <code>project/</code> folder. The paths are relative: <code>data/patients.csv</code> means the program looks for a data subfolder wherever it was launched from.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="section-block">
+    <h2>Design Decisions</h2>
+    <p class="section-intro">Every structural choice in SENTINEL has a specific reason. These are the questions most likely to come up when explaining the project.</p>
+
+    <table class="qa-table">
+      <tr><th>Question</th><th>Reasoning</th></tr>
+      <tr>
+        <td>Why linked lists instead of arrays?</td>
+        <td>The number of patients in an outbreak is unpredictable. Linked lists grow without a predefined limit and allocate memory only for what exists. No wasted reserved slots.</td>
+      </tr>
+      <tr>
+        <td>Why does each patient have their own stack?</td>
+        <td>Each patient has a unique sequence of events. A global stack would mix events from all patients. Embedding a stack inside each case keeps the history self-contained and directly tied to the patient it belongs to.</td>
+      </tr>
+      <tr>
+        <td>Stack vs Queue: what is the difference in this system?</td>
+        <td>Stack is LIFO, per patient, for investigation history. Queue is FIFO, global, for case processing order. They solve opposite ordering problems for different purposes.</td>
+      </tr>
+      <tr>
+        <td>How does Dijkstra find a transmission path?</td>
+        <td>Edge weights are inverted: distance added is (10 minus risk weight). High-risk contacts become short distances. Dijkstra finds shortest distance, which equals the highest-probability chain.</td>
+      </tr>
+      <tr>
+        <td>What separates Dijkstra from Prim's?</td>
+        <td>Dijkstra finds the best path between two specific patients. Prim's finds the minimum set of connections holding an entire cluster together. Different questions, different outputs.</td>
+      </tr>
+      <tr>
+        <td>Why AVL Tree when there is already a HashMap?</td>
+        <td>HashMap gives instant lookup by ID but cannot do range queries or maintain sorted order. AVL Tree enables range search by day and sorted timeline display. Two different problems.</td>
+      </tr>
+      <tr>
+        <td>Why two hashmaps?</td>
+        <td>One maps patient ID to profile for fast individual lookup. One maps area code to patient list for geographic analysis. Different keys, different purposes, both needed.</td>
+      </tr>
+      <tr>
+        <td>What does BFS actually simulate?</td>
+        <td>Starting from any patient, BFS shows who gets exposed wave by wave: day 1 contacts, then their contacts on day 2, and so on. It models how infection spreads outward through the contact network.</td>
+      </tr>
+      <tr>
+        <td>Does the system save data after changes?</td>
+        <td>The system loads from CSV at startup and operates in memory. Changes are not written back. This is a known limitation for the current version.</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="final-note">
+    <p>Every structure in SENTINEL exists because the problem required it. The epidemic domain maps naturally onto graphs, priority queues, and search trees. The system is not a showcase of data structures. <strong>The data structures are a consequence of modeling the problem honestly.</strong></p>
+  </div>
+
+  <div class="nav-footer">
+    <a href="part4_sentinel_context.html">← Part 4: SENTINEL in Context</a>
+    <a href="index.html">Back to Index →</a>
+  </div>
+
 </div>
-<div class="flow-step">
-  <div class="flow-num">2</div>
-  <div>A new Case object is created on the heap using <code>new Case(...)</code>. All fields are set. <code>calculateRiskScore()</code> runs automatically in the constructor.</div>
-</div>
-<div class="flow-step">
-  <div class="flow-num">3</div>
-  <div>An initial investigation event is pushed onto this case's personal Stack: day of registration, event description, initial note.</div>
-</div>
-<div class="flow-step">
-  <div class="flow-num green">4</div>
-  <div><code>caseQueue.enqueue(c)</code>: the case pointer enters the master queue at the rear.</div>
-</div>
-<div class="flow-step">
-  <div class="flow-num green">5</div>
-  <div><code>riskHeap.insert(id, score)</code>: patient ID and risk score enter the heap, sorted into correct position.</div>
-</div>
-<div class="flow-step">
-  <div class="flow-num green">6</div>
-  <div><code>patientTree.insert(id, day)</code>: patient ID and day enter the AVL tree. Tree rebalances if needed.</div>
-</div>
-<div class="flow-step">
-  <div class="flow-num green">7</div>
-  <div><code>patientMap.insertPerson(id, c)</code>: patient ID maps to case pointer in person hashmap.</div>
-</div>
-<div class="flow-step">
-  <div class="flow-num green">8</div>
-  <div><code>patientMap.insertLocation(area, id)</code>: patient ID is added to their area code's list in location hashmap.</div>
-</div>
-<div class="flow-step">
-  <div class="flow-num amber">9</div>
-  <div><code>contactGraph.addNode(id)</code>: a graph node is created for this patient.</div>
-</div>
-
-<p>After all patients are loaded, contacts.csv is processed. Each line adds one weighted edge between two existing graph nodes.</p>
-
-<div class="callout green">
-  One patient, nine operations, seven structures all updated simultaneously. After DataLoader finishes, the entire system is populated and every menu option is ready to use.
-</div>
-
-<hr>
-
-<h2>6. The Menu System</h2>
-
-<p>The menu runs in a <code>do-while</code> loop in main. It prints options, reads an integer choice, and a switch statement calls the appropriate function. Here is what each option does under the hood:</p>
-
-<table>
-  <tr><th>Option</th><th>What it calls</th><th>Structure used</th></tr>
-  <tr><td>1. View all patients</td><td>caseQueue.displayAll()</td><td>Queue traversal</td></tr>
-  <tr><td>2. Search by ID</td><td>patientMap.getPerson(id)</td><td>HashMap lookup</td></tr>
-  <tr><td>3. Add new patient</td><td>All nine insert operations</td><td>All structures</td></tr>
-  <tr><td>4. Update status</td><td>Direct field update + heap updateScore</td><td>HashMap + Heap</td></tr>
-  <tr><td>5. View case log</td><td>case->investigation_log.display()</td><td>Stack traversal</td></tr>
-  <tr><td>6. Add event to case</td><td>case->investigation_log.push(...)</td><td>Stack push</td></tr>
-  <tr><td>7. Patients by day</td><td>caseQueue.displayByDay(day)</td><td>Queue filter</td></tr>
-  <tr><td>8. Patients by area</td><td>caseQueue.displayByArea(area)</td><td>Queue filter</td></tr>
-  <tr><td>9. Day range search</td><td>patientTree.searchRange(d1, d2)</td><td>AVL Tree</td></tr>
-  <tr><td>10. High risk patients</td><td>riskHeap.display()</td><td>Heap traversal</td></tr>
-  <tr><td>11. Area distribution</td><td>patientMap.displayAllLocations()</td><td>Location HashMap</td></tr>
-  <tr><td>12. Contact network</td><td>contactGraph.displayGraph()</td><td>Graph traversal</td></tr>
-  <tr><td>13. Outbreak simulation</td><td>contactGraph.bfsWaveSimulation(id)</td><td>Graph + BFS Queue</td></tr>
-  <tr><td>14. Trace transmission</td><td>dijkstra.findPath(graph, src, dest)</td><td>Graph + Dijkstra</td></tr>
-  <tr><td>15. Containment network</td><td>prims.findMinContainmentNetwork(graph)</td><td>Graph + Prim's</td></tr>
-  <tr><td>16. Sorted timeline</td><td>patientTree.displayAll()</td><td>AVL inorder</td></tr>
-</table>
-
-<hr>
-
-<h2>7. Compiling and Running</h2>
-
-<p>On your OS open a terminal, navigate to the project folder, and run:</p>
-
-<pre>cd project
-g++ main.cpp -o sentinel
-./sentinel</pre>
-
-<p>The compiler reads main.cpp. Because main.cpp includes all the header files, the compiler sees all the code it needs in one pass. The output binary is named sentinel. Running it starts the program.</p>
-
-<div class="callout amber">
-  If you get an error saying patients.csv not found, make sure you are running the program from inside the project folder, not from somewhere else. The CSV paths are relative: <code>data/patients.csv</code> means the program looks for a data folder inside wherever it is run from.
-</div>
-
-<hr>
-
-<h2>8. Design Decisions</h2>
-<p>Common questions about why the system is built the way it is. Each answer explains the reasoning behind a specific choice.</p>
-
-<table>
-  <tr><th>Question</th><th>Answer</th></tr>
-  <tr><td>Why linked lists instead of arrays?</td><td>The number of patients in an outbreak is unpredictable. Linked lists allocate memory only for what exists, growing naturally as new cases are recorded without any predefined size limit.</td></tr>
-  <tr><td>What is the difference between the Stack and the Queue in this system?</td><td>Stack is LIFO, per patient, for investigation history. Queue is FIFO, global, for case processing order. Opposite access patterns for different purposes.</td></tr>
-  <tr><td>Why does each patient have their own stack instead of one global stack?</td><td>Each patient has a unique sequence of medical and investigative events. Embedding a stack inside each case keeps that history self contained and tied directly to the patient it belongs to.</td></tr>
-  <tr><td>How does Dijkstra find the transmission path?</td><td>We invert edge weights so high risk contacts become short distances. Dijkstra finds the shortest distance path which in our case is the highest probability transmission chain.</td></tr>
-  <tr><td>What is the difference between Dijkstra and Prim's here?</td><td>They answer fundamentally different questions. Dijkstra traces the path between two specific patients. Prim's finds the minimum set of connections holding an entire cluster together.</td></tr>
-  <tr><td>Why use an AVL Tree when there is already a HashMap?</td><td>HashMap gives instant lookup by ID but cannot do range queries or maintain sorted order. AVL Tree gives us range search by day and chronological display. They solve different problems.</td></tr>
-  <tr><td>Why two hashmaps instead of one?</td><td>One maps patient ID to their profile for fast individual lookup. One maps area code to list of patients for fast geographic analysis. Different keys, different purposes.</td></tr>
-  <tr><td>What does the BFS simulation actually show?</td><td>Simulates the outbreak spreading wave by wave from a starting patient. Shows who gets exposed in day 1, day 2, day 3 of the spread from that source.</td></tr>
-  <tr><td>How is the risk score calculated?</td><td>Seven binary factors: fever, cough, breathing difficulty, large gathering attendance, high contact job, known contact with confirmed case, age above 60 or comorbidity. Maximum 130 points.</td></tr>
-  <tr><td>Does the system persist data after changes?</td><td>Currently the system loads from CSV at startup and operates in memory. Data is not persisted back to CSV after changes. This is a known limitation.</td></tr>
-</table>
-
-<hr>
-
-<div class="callout teal">
-  Every structure in SENTINEL exists because the problem required it. The epidemic domain maps naturally onto graphs, priority queues, and search trees. The system is not a showcase of data structures. The data structures are a consequence of modeling the problem honestly.
-</div>
-
-<p style="color:#5F5E5A; font-size:0.9rem; text-align:center; margin-top:40px;">All five parts complete. SENTINEL documentation finished.</p>
-
-<div style="display:flex; justify-content:space-between; align-items:center; margin-top:48px; padding-top:24px; border-top:1px solid #D3D1C7;">
-  <a href="part4_sentinel_context.html" style="font-family:Georgia,serif; font-size:0.9rem; color:#534AB7; text-decoration:none;">← Part 4: SENTINEL Context</a>
-  <a href="index.html" style="font-family:Georgia,serif; font-size:0.9rem; color:#534AB7; text-decoration:none;">← Back to Index</a>
-</div>
-
 </body>
 </html>
