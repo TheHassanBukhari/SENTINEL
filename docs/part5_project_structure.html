@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Part 5: Project Structure — SENTINEL</title>
+<title>Part 5: Project Structure</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -372,7 +372,7 @@
 <body>
 
 <div class="topbar">
-  <a class="topbar-brand" href="index.html"><span>SENTINEL</span> — Study Notes</a>
+  <a class="topbar-brand" href="index.html"><span>SENTINEL</span> Study Notes</a>
   <nav class="topbar-nav">
     <a href="index.html">Index</a>
     <a href="part4_sentinel_context.html">← Part 4</a>
@@ -545,7 +545,7 @@
 
       <div class="file-card green">
         <div class="file-name">Graph.h</div>
-        <div class="file-role">Weighted contact network — foundation of all analysis</div>
+        <div class="file-role">Weighted contact network: foundation of all analysis</div>
         <div class="file-body">
           <span class="tag tag-purple">AdjNode</span> holds neighbor ID, risk weight, contact day, location type, and next pointer.<br>
           <span class="tag tag-purple">GraphNode</span> holds patient ID and head of its adjacency list.<br>
@@ -581,7 +581,7 @@
 
       <div class="file-card teal">
         <div class="file-name">DataLoader.h</div>
-        <div class="file-role">CSV reader — populates all structures simultaneously</div>
+        <div class="file-role">CSV reader: populates all structures simultaneously</div>
         <div class="file-body">
           Two methods: <code>loadPatients</code> and <code>loadContacts</code>.<br>
           <code>loadPatients</code> opens patients.csv, skips the header, reads each row, creates a Case, pushes an initial stack event, then inserts into Queue, Heap, AVL Tree, both HashMaps, and Graph in sequence.<br>
@@ -675,27 +675,27 @@
       </div>
       <div class="flow-item">
         <div class="flow-num fn-green">4</div>
-        <div><code>caseQueue.enqueue(c)</code> — case joins the master queue at the rear in arrival order.</div>
+        <div><code>caseQueue.enqueue(c)</code>: case joins the master queue at the rear in arrival order.</div>
       </div>
       <div class="flow-item">
         <div class="flow-num fn-green">5</div>
-        <div><code>riskHeap.insert(id, score)</code> — patient ID and risk score enter the heap, sorted to correct position.</div>
+        <div><code>riskHeap.insert(id, score)</code>: patient ID and risk score enter the heap, sorted to correct position.</div>
       </div>
       <div class="flow-item">
         <div class="flow-num fn-green">6</div>
-        <div><code>patientTree.insert(id, day)</code> — patient enters the AVL tree indexed by day. Tree rebalances if needed.</div>
+        <div><code>patientTree.insert(id, day)</code>: patient enters the AVL tree indexed by day. Tree rebalances if needed.</div>
       </div>
       <div class="flow-item">
         <div class="flow-num fn-green">7</div>
-        <div><code>patientMap.insertPerson(id, c)</code> — patient ID maps to case pointer in the person hashmap.</div>
+        <div><code>patientMap.insertPerson(id, c)</code>: patient ID maps to case pointer in the person hashmap.</div>
       </div>
       <div class="flow-item">
         <div class="flow-num fn-green">8</div>
-        <div><code>patientMap.insertLocation(area, id)</code> — patient ID added to their area code's list in the location hashmap.</div>
+        <div><code>patientMap.insertLocation(area, id)</code>: patient ID added to their area code's list in the location hashmap.</div>
       </div>
       <div class="flow-item">
         <div class="flow-num fn-amber">9</div>
-        <div><code>contactGraph.addNode(id)</code> — a graph node is created for this patient.</div>
+        <div><code>contactGraph.addNode(id)</code>: a graph node is created for this patient.</div>
       </div>
     </div>
 

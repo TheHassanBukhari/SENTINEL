@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Part 4: SENTINEL in Context — SENTINEL</title>
+<title>Part 4: SENTINEL in Context</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -345,7 +345,7 @@
 <body>
 
 <div class="topbar">
-  <a class="topbar-brand" href="index.html"><span>SENTINEL</span> — Study Notes</a>
+  <a class="topbar-brand" href="index.html"><span>SENTINEL</span>Study Notes</a>
   <nav class="topbar-nav">
     <a href="index.html">Index</a>
     <a href="part3_graphs_algorithms.html">← Part 3</a>
@@ -406,7 +406,7 @@
   <div class="section-block">
     <div class="section-header">
       <div class="section-icon icon-red">S</div>
-      <div class="section-title">Stack — The Case Investigation Log</div>
+      <div class="section-title">Stack: The Case Investigation Log</div>
     </div>
     <div class="section-tag">One stack per patient, embedded inside the case object</div>
 
@@ -425,19 +425,19 @@
 <svg width="100%" viewBox="0 0 680 260" role="img">
   <title>P003 personal investigation stack</title>
   <desc>Four events stacked for patient P003 with most recent at top</desc>
-  <text x="100" y="30" text-anchor="middle" font-family="Georgia" font-size="13" fill="#534AB7" font-weight="700">P003 — Bilal Hussain</text>
+  <text x="100" y="30" text-anchor="middle" font-family="Georgia" font-size="13" fill="#534AB7" font-weight="700">P003: Bilal Hussain</text>
   <text x="100" y="48" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">personal stack</text>
   <rect x="160" y="200" width="460" height="48" rx="6" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="1"/>
-  <text x="390" y="220" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">Day 2 — Registered. Status: positive</text>
+  <text x="390" y="220" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">Day 2: Registered. Status: positive</text>
   <text x="390" y="236" text-anchor="middle" font-family="Georgia" font-size="11" fill="#888780">Note: Initial intake from CSV. High risk score 90.</text>
   <rect x="160" y="148" width="460" height="48" rx="6" fill="#D3D1C7" stroke="#888780" stroke-width="1"/>
-  <text x="390" y="168" text-anchor="middle" font-family="Georgia" font-size="11" fill="#444441">Day 4 — Contact tracing initiated</text>
+  <text x="390" y="168" text-anchor="middle" font-family="Georgia" font-size="11" fill="#444441">Day 4: Contact tracing initiated</text>
   <text x="390" y="184" text-anchor="middle" font-family="Georgia" font-size="11" fill="#5F5E5A">Note: 3 contacts identified. P006, P008 flagged.</text>
   <rect x="160" y="96" width="460" height="48" rx="6" fill="#AFA9EC" stroke="#7F77DD" stroke-width="1"/>
-  <text x="390" y="116" text-anchor="middle" font-family="Georgia" font-size="11" fill="#26215C">Day 5 — Quarantine enforced</text>
+  <text x="390" y="116" text-anchor="middle" font-family="Georgia" font-size="11" fill="#26215C">Day 5: Quarantine enforced</text>
   <text x="390" y="132" text-anchor="middle" font-family="Georgia" font-size="11" fill="#3C3489">Note: Home isolation ordered. Risk to area B2.</text>
   <rect x="160" y="44" width="460" height="48" rx="6" fill="#534AB7" stroke="#3C3489" stroke-width="1.5"/>
-  <text x="390" y="64" text-anchor="middle" font-family="Georgia" font-size="11" fill="#CECBF6">Day 8 — Condition worsened — TOP</text>
+  <text x="390" y="64" text-anchor="middle" font-family="Georgia" font-size="11" fill="#CECBF6">Day 8: Condition worsened: TOP</text>
   <text x="390" y="80" text-anchor="middle" font-family="Georgia" font-size="11" fill="#EEEDFE">Note: Referred to hospital. Status updated.</text>
   <text x="100" y="75" text-anchor="middle" font-family="Georgia" font-size="12" fill="#534AB7" font-weight="700">TOP</text>
   <text x="100" y="230" text-anchor="middle" font-family="Georgia" font-size="12" fill="#888780">BOTTOM</text>
@@ -457,9 +457,9 @@
   <div class="section-block">
     <div class="section-header">
       <div class="section-icon icon-purple">Q</div>
-      <div class="section-title">Queue — The Master Case Pipeline</div>
+      <div class="section-title">Queue: The Master Case Pipeline</div>
     </div>
-    <div class="section-tag">FIFO — cases processed in the order they were recorded</div>
+    <div class="section-tag">FIFO: cases processed in the order they were recorded</div>
 
     <p class="section-intro">Every patient registered in SENTINEL enters the master queue in arrival order. The queue is the spine of the entire system. Each node is not just a patient ID. It is a full case object containing everything about that patient, including their personal stack.</p>
 
@@ -484,7 +484,7 @@
   <div class="section-block">
     <div class="section-header">
       <div class="section-icon icon-coral">H</div>
-      <div class="section-title">Heap — Risk Priority Engine</div>
+      <div class="section-title">Heap: Risk Priority Engine</div>
     </div>
     <div class="section-tag">Highest risk patient always instantly accessible</div>
 
@@ -541,7 +541,7 @@
   <div class="section-block">
     <div class="section-header">
       <div class="section-icon icon-green">AVL</div>
-      <div class="section-title">AVL Tree — Date Range Search</div>
+      <div class="section-title">AVL Tree: Date Range Search</div>
     </div>
     <div class="section-tag">Patients indexed by outbreak day, self-balancing</div>
 
@@ -590,7 +590,7 @@
   <div class="section-block">
     <div class="section-header">
       <div class="section-icon icon-gray">HM</div>
-      <div class="section-title">HashMap — Dual Lookup System</div>
+      <div class="section-title">HashMap: Dual Lookup System</div>
     </div>
     <div class="section-tag">Two hashmaps, two different problems solved</div>
 
@@ -598,13 +598,13 @@
 
     <div class="dual-map">
       <div class="dual-card dual-card-purple">
-        <div class="dual-card-label">Hashmap One — Person Profiles</div>
+        <div class="dual-card-label">Hashmap One: Person Profiles</div>
         <p><strong>Key:</strong> Patient ID like P003</p>
         <p><strong>Value:</strong> Pointer to full Case object</p>
         <p>Direct access to any patient's complete profile, status, risk score, and investigation log in one step. Used by every menu operation that needs to find a specific person.</p>
       </div>
       <div class="dual-card dual-card-teal">
-        <div class="dual-card-label">Hashmap Two — Location Index</div>
+        <div class="dual-card-label">Hashmap Two: Location Index</div>
         <p><strong>Key:</strong> Area code like A1 or B2</p>
         <p><strong>Value:</strong> List of all patient IDs in that zone</p>
         <p>Instantly reveals the case load per area. Detects hotspots. Compares zones. A single lookup shows which area needs testing teams deployed immediately.</p>
@@ -623,7 +623,7 @@
   <div class="section-block">
     <div class="section-header">
       <div class="section-icon icon-teal">G</div>
-      <div class="section-title">Graph — The Contact Network</div>
+      <div class="section-title">Graph: The Contact Network</div>
     </div>
     <div class="section-tag">People as nodes, contacts as weighted edges</div>
 
@@ -679,7 +679,7 @@
   <div class="section-block">
     <div class="section-header">
       <div class="section-icon icon-amber">Dij</div>
-      <div class="section-title">Dijkstra — Transmission Path Tracer</div>
+      <div class="section-title">Dijkstra: Transmission Path Tracer</div>
     </div>
     <div class="section-tag">Most probable infection chain from patient zero to any individual</div>
 
@@ -699,7 +699,7 @@
   <div class="section-block">
     <div class="section-header">
       <div class="section-icon icon-teal">MST</div>
-      <div class="section-title">Prim's — Minimum Containment Network</div>
+      <div class="section-title">Prim's: Minimum Containment Network</div>
     </div>
     <div class="section-tag">Surgical quarantine targeting using graph mathematics</div>
 
