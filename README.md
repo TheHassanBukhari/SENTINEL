@@ -89,6 +89,11 @@ Requires g++ with C++11 or later.
 
 ---
 
+## Documentation
+To visit project documentation [Click here](https://thehassanbukhari.github.io/SENTINEL/)
+
+---
+
 ## Risk Scoring System
 
 Each patient is evaluated on 7 criteria at registration:
@@ -105,7 +110,6 @@ Each patient is evaluated on 7 criteria at registration:
 | **Maximum** | **130** |
 
 ---
-
 ## License
 
 This project is licensed under the MIT License.
