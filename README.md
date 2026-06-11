@@ -94,6 +94,14 @@ To visit project documentation [Click here](https://thehassanbukhari.github.io/S
 
 ---
 
+## Visualizer
+SENTINEL is intentionally implemented as a console based application to keep the focus on data structures and algorithms. However, understanding graph relationships and outbreak propagation through terminal output alone can be difficult.
+
+To make the system easier to explore, a separate visualizer was created. It provides an interactive representation of the contact network, transmission paths, and containment concepts used throughout the project while keeping the core implementation entirely console based.
+To visit the visualizer, [Click here](https://thehassanbukhari.github.io/SENTINEL/visualizer.html)
+
+---
+
 ## Risk Scoring System
 
 Each patient is evaluated on 7 criteria at registration:
