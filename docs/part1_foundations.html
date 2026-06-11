@@ -399,7 +399,7 @@
 <p class="caption">A linked list. HEAD points to the first node. Each node points to the next. The last node points to null signaling the end of the chain.</p>
 
   <div class="callout callout-green">
-    <strong>Why linked lists beat arrays for SENTINEL:</strong> Nodes can live anywhere in memory. No consecutive slots needed. Adding a new patient means creating one new node anywhere and updating one pointer. No copying, no resizing, no wasted reserved space. The system grows naturally as the outbreak grows.
+    <strong>Why linked lists beat arrays for most of SENTINEL:</strong> Nodes can live anywhere in memory. No consecutive slots needed. Adding a new patient means creating one new node and updating one pointer. No copying, no resizing, no wasted reserved space. The system grows naturally as the outbreak grows. Arrays still win when you need index-based math, which is exactly why the Heap uses one.
   </div>
 
   <h2>Basic Operations</h2>
@@ -436,18 +436,18 @@
 
   <h2>Why Everything in SENTINEL Is Built on This</h2>
 
-  <p>Every data structure in SENTINEL, the Stack, the Queue, the Heap, the AVL Tree, the HashMap, the Graph, is built node by node using this exact pattern. No fixed arrays anywhere in the project.</p>
+<p>Almost every data structure in SENTINEL is built node by node using this pattern. The Stack, Queue, AVL Tree, HashMap, and Graph all use linked nodes with pointers. The Heap is the exception: it uses a fixed-size array with index arithmetic to navigate parent and child positions.</p>
 
-  <p>This means three things for the system:</p>
+  <p>For the linked-list-based structures, this means:</p>
 
   <ul>
-    <li>It can grow as new patients arrive without any size declared upfront</li>
+    <li>The system can grow as new patients arrive without any size declared upfront</li>
     <li>Memory is used only for what actually exists, never reserved and wasted</li>
     <li>Each structure shrinks and grows dynamically as the outbreak evolves</li>
   </ul>
 
   <div class="callout callout-purple">
-    The linked list is not one of the seven data structures in SENTINEL. It is the material everything else is made of. Like how concrete is not a building, but every building is built from it. You cannot understand what the Stack or the Graph is doing without first understanding this.
+    The linked list is the foundation most structures in SENTINEL are built on. The Stack, Queue, AVL Tree, HashMap, and Graph all use nodes and pointers. The one exception is the Heap, which uses a fixed array with parent/child index arithmetic instead. Understanding both approaches matters: pointers give you dynamic growth, arrays give you O(log n) index math that makes heapify possible.
   </div>
 
   <hr>

@@ -509,12 +509,12 @@
       <div class="file-card">
         <div class="file-name">Heap.h</div>
         <div class="file-role">Risk priority engine</div>
-        <div class="file-body">
-          <span class="tag tag-purple">HeapNode</span> holds patient ID, risk score, and next pointer.<br>
-          <span class="tag tag-purple">Heap</span> maintains a linked list in descending order of risk score. Head is always the highest risk patient.<br>
-          Methods: insert, extractMax, peekMax, isEmpty, display, updateScore.<br>
-          <code>updateScore</code> removes the old entry and reinserts at the correct position, keeping the sort intact.<br>
-          <span class="tag tag-amber">Depends on:</span> Case.h
+<div class="file-body">
+          <span class="tag tag-purple">HeapNode</span> holds patient ID and risk score.<br>
+          <span class="tag tag-purple">Heap</span> maintains a fixed-size array of HeapNode objects. Root at index 0 is always the highest risk patient. Parent of index <code>i</code> is at <code>(i-1)/2</code>. Children at <code>2i+1</code> and <code>2i+2</code>.<br>
+          Methods: insert (bubbles up), extractMax (bubbles down), peekMax, isEmpty, display, updateScore.<br>
+          <code>updateScore</code> finds the node by ID, updates the score, then calls both bubbleUp and bubbleDown to restore heap order.<br>
+          <span class="tag tag-amber">Depends on:</span> Graph.h (for MAX_PATIENTS constant)
         </div>
       </div>
 
@@ -760,7 +760,7 @@
       <tr><th>Question</th><th>Reasoning</th></tr>
       <tr>
         <td>Why linked lists instead of arrays?</td>
-        <td>The number of patients in an outbreak is unpredictable. Linked lists grow without a predefined limit and allocate memory only for what exists. No wasted reserved slots.</td>
+        <td>Most structures use linked lists because the number of patients is unpredictable and linked lists grow without a predefined limit. The Heap is the exception: it uses a fixed array of MAX_PATIENTS because the index arithmetic required for bubbleUp and bubbleDown only works on arrays.</td>
       </tr>
       <tr>
         <td>Why does each patient have their own stack?</td>

@@ -411,7 +411,7 @@
 <p class="caption">Max heap. The root always holds the largest value. Every parent is greater than its children. 95 is always instantly accessible at the top.</p>
 
     <h3>Implementation in SENTINEL</h3>
-    <p>We maintain a sorted linked list in descending order of priority score. The head is always the highest priority item. Inserting a new item means walking to find the correct position and splicing in. This preserves the heap property using pure linked list logic with no array involved.</p>
+    <p>The heap uses a fixed-size array of <code>HeapNode</code> objects. The root sits at index 0. For any node at index <code>i</code>, its left child is at <code>2i+1</code>, its right child at <code>2i+2</code>, and its parent at <code>(i-1)/2</code>. Inserting a new item places it at the end of the array and bubbles it up by swapping with its parent until the parent is larger. Removing the max swaps the root with the last element, shrinks the size by one, then bubbles down, always swapping with the larger child. Both operations are O(log n).</p>
 
     <div class="callout callout-purple">
       <strong>The core guarantee:</strong> No matter how many items the heap holds, the most critical one is always at the top. You never search for it. One step access, always.
