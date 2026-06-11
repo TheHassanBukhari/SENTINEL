@@ -110,6 +110,11 @@ Each patient is evaluated on 7 criteria at registration:
 | **Maximum** | **130** |
 
 ---
+
+## Project Team
+
+Developed by [Hassan Bukhari](https://github.com/TheHassanBukhari) and [Munnazah Noor](https://github.com/munnazahnoor-10102005).
+
 ## License
 
 This project is licensed under the MIT License.
