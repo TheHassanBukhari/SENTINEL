@@ -4,6 +4,7 @@
 using namespace std;
 
 const int MAX_PATIENTS = 100;
+const int INF = 99999;
 
 struct AdjNode {
     string patient_id;

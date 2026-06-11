@@ -61,18 +61,6 @@ string getCurrentTime() {
     return string(buf);
 }
 
-int calculateScore(bool fv, bool cg, bool bd, bool lg, bool hcj, bool kc, bool com) {
-    int score = 0;
-    if (fv) score += 20;
-    if (cg) score += 15;
-    if (bd) score += 25;
-    if (lg) score += 10;
-    if (hcj) score += 15;
-    if (kc) score += 25;
-    if (com) score += 20;
-    return score;
-}
-
 void addNewPatient() {
     string id, name, area, status;
     int age, day;

@@ -34,8 +34,12 @@ public:
 
             if (i < 13) continue;
 
-            Case* c = new Case(
-                fields[0], fields[1], stoi(fields[2]), fields[3], stoi(fields[4]),
+int age = 0, day = 0;
+try { age = stoi(fields[2]); day = stoi(fields[4]); }
+catch (...) { continue; }
+
+Case* c = new Case(
+    fields[0], fields[1], age, fields[3], day,
                 fields[5] == "1", fields[6] == "1", fields[7] == "1",
                 fields[8] == "1", fields[9] == "1", fields[10] == "1",
                 fields[11] == "1", fields[12]
@@ -82,7 +86,10 @@ public:
 
             if (i < 7) continue;
 
-            g.addEdge(fields[0], fields[1], stoi(fields[6]), stoi(fields[2]), fields[4]);
+            int weight = 0, day = 0;
+try { weight = stoi(fields[6]); day = stoi(fields[2]); }
+catch (...) { continue; }
+g.addEdge(fields[0], fields[1], weight, day, fields[4]);
         }
 
         file.close();

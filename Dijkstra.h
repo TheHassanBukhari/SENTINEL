@@ -4,7 +4,6 @@
 #include "Graph.h"
 using namespace std;
 
-const int INF = 99999;
 
 class Dijkstra {
 public:
